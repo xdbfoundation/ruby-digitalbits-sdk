@@ -1,0 +1,8 @@
+#! /usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "break"
+require "digitalbits-sdk"
+require "pry"
+Pry.start

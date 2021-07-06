@@ -1,0 +1,17 @@
+name: release-please
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+    - id: release
+      uses: google-github-actions/release-please-action@v2.28
+      with:
+        release-type: ruby
+        bump-minor-pre-major: true
+        version-file: "base/lib/digitalbits/version.rb"

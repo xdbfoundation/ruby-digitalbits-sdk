@@ -1,0 +1,15 @@
+{
+  "bootstrap-sha": "571cb1b71ac32484321041b64507edcd926fc4cb",
+  "bump-minor-pre-major": true,
+  "release-type": "ruby",
+  "packages": {
+    "base": {
+      "package-name": "digitalbits-base",
+      "version-file": "lib/digitalbits/base/version.rb"
+    },
+    "sdk": {
+      "package-name": "digitalbits-sdk",
+      "version-file": "lib/digitalbits/sdk/version.rb"
+    }
+  }
+}

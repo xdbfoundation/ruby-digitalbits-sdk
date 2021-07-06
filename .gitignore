@@ -1,0 +1,16 @@
+.bundle/
+.yardoc
+.rspec_status
+_yardoc/
+coverage/
+doc/
+pkg/
+spec/reports/
+tmp/
+vendor/bundle
+*.bundle
+*.so
+*.o
+*.a
+mkmf.log
+.vscode
