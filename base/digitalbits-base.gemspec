@@ -5,6 +5,7 @@ require_relative "lib/digitalbits/version"
 Gem::Specification.new do |spec|
   spec.name = "digitalbits-base"
   spec.version = DigitalBits::VERSION
+  spec.authors = ["XDB Foundation"]
   spec.summary = "DigitalBits client library: XDR"
   spec.homepage = "https://github.com/xdbfoundation/ruby-digitalbits-sdk"
   spec.license = "Apache-2.0"
