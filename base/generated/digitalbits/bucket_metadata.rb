@@ -20,7 +20,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class BucketMetadata < XDR::Struct
     include XDR::Namespace
 

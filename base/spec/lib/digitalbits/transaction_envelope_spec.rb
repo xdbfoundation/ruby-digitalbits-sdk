@@ -1,11 +1,11 @@
-RSpec.describe DigitalBits::TransactionEnvelope do
-  let(:sender) { DigitalBits::KeyPair.random }
-  let(:receiver) { DigitalBits::KeyPair.random }
+RSpec.describe Digitalbits::TransactionEnvelope do
+  let(:sender) { Digitalbits::KeyPair.random }
+  let(:receiver) { Digitalbits::KeyPair.random }
   let(:transaction) do
-    DigitalBits::TransactionBuilder.new(
+    Digitalbits::TransactionBuilder.new(
       source_account: sender, sequence_number: 1
     ).add_operation(
-      DigitalBits::Operation.payment(
+      Digitalbits::Operation.payment(
         destination: receiver, amount: [:native, 20000000]
       )
     ).set_timeout(0).build
@@ -53,7 +53,7 @@ RSpec.describe DigitalBits::TransactionEnvelope do
     end
 
     context "when signed by a multiple accounts" do
-      let(:alternate_signer) { DigitalBits::KeyPair.random }
+      let(:alternate_signer) { Digitalbits::KeyPair.random }
       let(:signers) { [sender, alternate_signer] }
       let(:verifiers) { signers }
 
@@ -62,7 +62,7 @@ RSpec.describe DigitalBits::TransactionEnvelope do
       end
 
       context "and all public keys are provided, with additional unused keys provided" do
-        let(:verifiers) { signers + [DigitalBits::KeyPair.random] }
+        let(:verifiers) { signers + [Digitalbits::KeyPair.random] }
         it { is_expected.to be_truthy }
       end
 

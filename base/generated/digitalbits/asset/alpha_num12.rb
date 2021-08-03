@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Asset
     class AlphaNum12 < XDR::Struct
       attribute :asset_code, AssetCode12

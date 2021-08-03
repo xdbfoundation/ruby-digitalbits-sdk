@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   module Frontier
     class Problem
       def initialize(attributes)

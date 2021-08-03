@@ -2,17 +2,17 @@
 
 require "digitalbits-base"
 
-master = DigitalBits::KeyPair.master
-destination = DigitalBits::KeyPair.master
+master = Digitalbits::KeyPair.master
+destination = Digitalbits::KeyPair.master
 
-tx1 = DigitalBits::TransactionBuilder.payment({
+tx1 = Digitalbits::TransactionBuilder.payment({
   source_account: master,
   destination: destination,
   sequence_number: 1,
   amount: [:native, 20]
 })
 
-tx2 = DigitalBits::TransactionBuilder.payment({
+tx2 = Digitalbits::TransactionBuilder.payment({
   source_account: master,
   destination: destination,
   sequence_number: 2,

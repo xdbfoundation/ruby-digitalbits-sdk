@@ -2,7 +2,7 @@ require "hyperclient"
 require "active_support/core_ext/object/blank"
 require "securerandom"
 
-module DigitalBits
+module Digitalbits
   class AccountRequiresMemoError < StandardError
     attr_reader :account_id, :operation_index
 
@@ -61,9 +61,9 @@ module DigitalBits
       }
     end
 
-    # @param [DigitalBits::Account|String] account_or_address
+    # @param [Digitalbits::Account|String] account_or_address
     def account_info(account_or_address)
-      account_id = if account_or_address.is_a?(DigitalBits::Account)
+      account_id = if account_or_address.is_a?(Digitalbits::Account)
         account_or_address.address
       else
         account_or_address
@@ -71,14 +71,14 @@ module DigitalBits
       @frontier.account(account_id: account_id)._get
     end
 
-    # @option options [DigitalBits::Account] :account
-    # @option options [DigitalBits::Account] :destination
+    # @option options [Digitalbits::Account] :account
+    # @option options [Digitalbits::Account] :destination
     def account_merge(options = {})
       account = options[:account]
       destination = options[:destination]
       sequence = options[:sequence] || (account_info(account).sequence.to_i + 1)
 
-      transaction = DigitalBits::TransactionBuilder.account_merge(
+      transaction = Digitalbits::TransactionBuilder.account_merge(
         source_account: destination.keypair,
         sequence_number: sequence,
         destination: destination.keypair
@@ -94,8 +94,8 @@ module DigitalBits
       Faraday.post(uri.to_s)
     end
 
-    # @option options [DigitalBits::Account] :account
-    # @option options [DigitalBits::Account] :funder
+    # @option options [Digitalbits::Account] :account
+    # @option options [Digitalbits::Account] :funder
     # @option options [Integer] :starting_balance
     def create_account(options = {})
       funder = options[:funder]
@@ -104,7 +104,7 @@ module DigitalBits
       # instead of using a hard-coded default value.
       fee = options[:fee] || DEFAULT_FEE
 
-      payment = DigitalBits::TransactionBuilder.create_account(
+      payment = Digitalbits::TransactionBuilder.create_account(
         source_account: funder.keypair,
         sequence_number: sequence,
         base_fee: fee,
@@ -115,9 +115,9 @@ module DigitalBits
       submit_transaction(tx_envelope: envelope)
     end
 
-    # @option options [DigitalBits::Account] :from The source account
-    # @option options [DigitalBits::Account] :to The destination account
-    # @option options [DigitalBits::Amount] :amount The amount to send
+    # @option options [Digitalbits::Account] :from The source account
+    # @option options [Digitalbits::Account] :to The destination account
+    # @option options [Digitalbits::Amount] :amount The amount to send
     def send_payment(options = {})
       from_account = options[:from]
       tx_source_account = options[:transaction_source] || from_account
@@ -126,11 +126,11 @@ module DigitalBits
       sequence = options[:sequence] ||
         (account_info(tx_source_account).sequence.to_i + 1)
 
-      payment = DigitalBits::TransactionBuilder.new(
+      payment = Digitalbits::TransactionBuilder.new(
         source_account: tx_source_account.keypair,
         sequence_number: sequence
       ).add_operation(
-        DigitalBits::Operation.payment(
+        Digitalbits::Operation.payment(
           source_account: op_source_account.keypair,
           destination: options[:to].keypair,
           amount: options[:amount].to_payment
@@ -144,10 +144,10 @@ module DigitalBits
       submit_transaction(tx_envelope: envelope)
     end
 
-    # @option options [DigitalBits::Account] :account
+    # @option options [Digitalbits::Account] :account
     # @option options [Integer] :limit
     # @option options [Integer] :cursor
-    # @return [DigitalBits::TransactionPage]
+    # @return [Digitalbits::TransactionPage]
     def transactions(options = {})
       args = options.slice(:limit, :cursor)
 
@@ -161,8 +161,8 @@ module DigitalBits
       TransactionPage.new(resource)
     end
 
-    # @param [Array(Symbol,String,DigitalBits::KeyPair|DigitalBits::Account)] asset
-    # @param [DigitalBits::Account] source
+    # @param [Array(Symbol,String,Digitalbits::KeyPair|Digitalbits::Account)] asset
+    # @param [Digitalbits::Account] source
     # @param [Integer] sequence
     # @param [Integer] fee
     # @param [Integer] limit
@@ -182,7 +182,7 @@ module DigitalBits
       }
       op_args[:limit] = limit unless limit.nil?
 
-      tx = DigitalBits::TransactionBuilder.change_trust(
+      tx = Digitalbits::TransactionBuilder.change_trust(
         source_account: source.keypair,
         sequence_number: sequence,
         **op_args
@@ -192,7 +192,7 @@ module DigitalBits
       submit_transaction(tx_envelope: envelope)
     end
 
-    # @param [DigitalBits::TransactionEnvelope] tx_envelope
+    # @param [Digitalbits::TransactionEnvelope] tx_envelope
     # @option options [Boolean] :skip_memo_required_check (false)
     def submit_transaction(tx_envelope:, options: {skip_memo_required_check: false})
       unless options[:skip_memo_required_check]
@@ -202,21 +202,21 @@ module DigitalBits
     end
 
     # Required by SEP-0029
-    # @param [DigitalBits::TransactionEnvelope] tx_envelope
+    # @param [Digitalbits::TransactionEnvelope] tx_envelope
     def check_memo_required(tx_envelope)
       tx = tx_envelope.tx
 
-      if tx.is_a?(DigitalBits::FeeBumpTransaction)
+      if tx.is_a?(Digitalbits::FeeBumpTransaction)
         tx = tx.inner_tx.v1!.tx
       end
 
       # Check transactions where the .memo field is nil or of type MemoType.memo_none
-      if !tx.memo.nil? && tx.memo.type != DigitalBits::MemoType.memo_none
+      if !tx.memo.nil? && tx.memo.type != Digitalbits::MemoType.memo_none
         return
       end
 
       destinations = Set.new
-      ot = DigitalBits::OperationType
+      ot = Digitalbits::OperationType
 
       tx.operations.each_with_index do |op, idx|
         destination = case op.body.type
@@ -230,12 +230,12 @@ module DigitalBits
           next
         end
 
-        if destinations.include?(destination) || destination.switch == DigitalBits::CryptoKeyType.key_type_muxed_ed25519
+        if destinations.include?(destination) || destination.switch == Digitalbits::CryptoKeyType.key_type_muxed_ed25519
           next
         end
 
         destinations.add(destination)
-        kp = DigitalBits::KeyPair.from_public_key(destination.value)
+        kp = Digitalbits::KeyPair.from_public_key(destination.value)
 
         begin
           info = account_info(kp.address)
@@ -250,47 +250,47 @@ module DigitalBits
       end
     end
 
-    # DEPRECATED: this function has been moved DigitalBits::SEP10.build_challenge_tx and
+    # DEPRECATED: this function has been moved Digitalbits::SEP10.build_challenge_tx and
     # will be removed in the next major version release.
     #
-    # A wrapper function for DigitalBits::SEP10::build_challenge_tx.
+    # A wrapper function for Digitalbits::SEP10::build_challenge_tx.
     #
-    # @param server [DigitalBits::KeyPair] Keypair for server's signing account.
-    # @param client [DigitalBits::KeyPair] Keypair for the account whishing to authenticate with the server.
+    # @param server [Digitalbits::KeyPair] Keypair for server's signing account.
+    # @param client [Digitalbits::KeyPair] Keypair for the account whishing to authenticate with the server.
     # @param anchor_name [String] Anchor's name to be used in the manage_data key.
     # @param timeout [Integer] Challenge duration (default to 5 minutes).
     #
     # @return [String] A base64 encoded string of the raw TransactionEnvelope xdr struct for the transaction.
     def build_challenge_tx(server:, client:, anchor_name:, timeout: 300)
-      DigitalBits::SEP10.build_challenge_tx(
+      Digitalbits::SEP10.build_challenge_tx(
         server: server, client: client, anchor_name: anchor_name, timeout: timeout
       )
     end
 
-    # DEPRECATED: this function has been moved to DigitalBits::SEP10::read_challenge_tx and
+    # DEPRECATED: this function has been moved to Digitalbits::SEP10::read_challenge_tx and
     # will be removed in the next major version release.
     #
-    # A wrapper function for DigitalBits::SEP10.verify_challenge_transaction
+    # A wrapper function for Digitalbits::SEP10.verify_challenge_transaction
     #
     # @param challenge [String] SEP0010 transaction challenge in base64.
-    # @param server [DigitalBits::KeyPair] DigitalBits::KeyPair for server where the challenge was generated.
+    # @param server [Digitalbits::KeyPair] Digitalbits::KeyPair for server where the challenge was generated.
     #
     # @return [Boolean]
     def verify_challenge_tx(challenge:, server:)
-      DigitalBits::SEP10.verify_challenge_tx(challenge_xdr: challenge, server: server)
+      Digitalbits::SEP10.verify_challenge_tx(challenge_xdr: challenge, server: server)
       true
     end
 
-    # DEPRECATED: this function has been moved to DigitalBits::SEP10::verify_tx_signed_by and
+    # DEPRECATED: this function has been moved to Digitalbits::SEP10::verify_tx_signed_by and
     # will be removed in the next major version release.
     #
-    # @param transaction_envelope [DigitalBits::TransactionEnvelope]
-    # @param keypair [DigitalBits::KeyPair]
+    # @param transaction_envelope [Digitalbits::TransactionEnvelope]
+    # @param keypair [Digitalbits::KeyPair]
     #
     # @return [Boolean]
     #
     def verify_tx_signed_by(transaction_envelope:, keypair:)
-      DigitalBits::SEP10.verify_tx_signed_by(
+      Digitalbits::SEP10.verify_tx_signed_by(
         tx_envelope: transaction_envelope, keypair: keypair
       )
     end

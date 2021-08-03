@@ -1,10 +1,10 @@
 require "digitalbits/convert"
 require "digitalbits/dsl"
 
-module DigitalBits
+module Digitalbits
   class LedgerKey
     class << self
-      include DigitalBits::DSL
+      include Digitalbits::DSL
 
       def switch_for_arm(name)
         (@switch_by_arm ||= switches.invert).fetch(name)
@@ -16,7 +16,7 @@ module DigitalBits
         when nil
           account(account_id: KeyPair(account_id).account_id)
         when :balance_id
-          claimable_balance(balance_id: ClaimableBalanceID.v0(DigitalBits::Convert.from_hex(value.to_s)))
+          claimable_balance(balance_id: ClaimableBalanceID.v0(Digitalbits::Convert.from_hex(value.to_s)))
         when :offer_id
           offer(seller_id: account_id, offer_id: Integer(value))
         when :data_name

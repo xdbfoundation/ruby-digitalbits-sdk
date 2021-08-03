@@ -1,9 +1,9 @@
-RSpec.describe DigitalBits::TransactionBuilder do
+RSpec.describe Digitalbits::TransactionBuilder do
   let(:base_fee) { 100 }
-  let(:key_pair) { DigitalBits::KeyPair.random }
+  let(:key_pair) { Digitalbits::KeyPair.random }
   builder = nil
   before(:each) do
-    builder = DigitalBits::TransactionBuilder.new(
+    builder = Digitalbits::TransactionBuilder.new(
       source_account: key_pair,
       sequence_number: 1
     )
@@ -12,7 +12,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
   describe ".initialize" do
     it "bad source_account" do
       expect {
-        DigitalBits::TransactionBuilder.new(
+        Digitalbits::TransactionBuilder.new(
           source_account: key_pair.account_id,
           sequence_number: 1
         )
@@ -22,7 +22,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
     it "bad sequence_number" do
       expect {
-        DigitalBits::TransactionBuilder.new(
+        Digitalbits::TransactionBuilder.new(
           source_account: key_pair,
           sequence_number: -1
         )
@@ -32,7 +32,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
     it "bad timeout" do
       expect {
-        DigitalBits::TransactionBuilder.new(
+        Digitalbits::TransactionBuilder.new(
           source_account: key_pair,
           sequence_number: 1,
           time_bounds: 600
@@ -43,7 +43,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
     it "bad base_fee" do
       expect {
-        DigitalBits::TransactionBuilder.new(
+        Digitalbits::TransactionBuilder.new(
           source_account: key_pair,
           sequence_number: 1,
           base_fee: 0
@@ -54,7 +54,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
     it "bad memo" do
       expect {
-        DigitalBits::TransactionBuilder.new(
+        Digitalbits::TransactionBuilder.new(
           source_account: key_pair,
           sequence_number: 1,
           memo: {"data" => "Testing bad memo"}
@@ -65,7 +65,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     it "sets default time bounds unlimited" do
-      builder = DigitalBits::TransactionBuilder.new(
+      builder = Digitalbits::TransactionBuilder.new(
         source_account: key_pair,
         sequence_number: 1
       )
@@ -74,21 +74,21 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     it "success" do
-      builder = DigitalBits::TransactionBuilder.new(
+      builder = Digitalbits::TransactionBuilder.new(
         source_account: key_pair,
         sequence_number: 1,
-        time_bounds: DigitalBits::TimeBounds.new(min_time: 0, max_time: 600),
+        time_bounds: Digitalbits::TimeBounds.new(min_time: 0, max_time: 600),
         base_fee: 200,
         memo: "My test memo"
       )
-      expect(builder.memo).to eql(DigitalBits::Memo.new(:memo_text, "My test memo"))
+      expect(builder.memo).to eql(Digitalbits::Memo.new(:memo_text, "My test memo"))
     end
   end
 
   describe "constructor's memo assignment" do
     subject do
-      DigitalBits::TransactionBuilder.new(
-        source_account: DigitalBits::KeyPair.random,
+      Digitalbits::TransactionBuilder.new(
+        source_account: Digitalbits::KeyPair.random,
         sequence_number: 1,
         memo: memo
       ).build
@@ -98,7 +98,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
       let(:memo) { 3 }
 
       it "sets to an ID memo" do
-        expect(subject.memo).to eql(DigitalBits::Memo.new(:memo_id, 3))
+        expect(subject.memo).to eql(Digitalbits::Memo.new(:memo_id, 3))
       end
     end
 
@@ -106,12 +106,12 @@ RSpec.describe DigitalBits::TransactionBuilder do
       let(:memo) { "hello" }
 
       it "sets to an text memo" do
-        expect(subject.memo).to eql(DigitalBits::Memo.new(:memo_text, "hello"))
+        expect(subject.memo).to eql(Digitalbits::Memo.new(:memo_text, "hello"))
       end
     end
 
-    context "a DigitalBits::Memo instance provided" do
-      let(:memo) { DigitalBits::Memo.new(:memo_text, "hello") }
+    context "a Digitalbits::Memo instance provided" do
+      let(:memo) { Digitalbits::Memo.new(:memo_text, "hello") }
 
       it "uses the provided value directly" do
         expect(subject.memo).to eql(memo)
@@ -119,10 +119,10 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     [
-      [[:id, 3], DigitalBits::Memo.new(:memo_id, 3)],
-      [[:text, "h"], DigitalBits::Memo.new(:memo_text, "h")],
-      [[:hash, "h"], DigitalBits::Memo.new(:memo_hash, "h")],
-      [[:return, "h"], DigitalBits::Memo.new(:memo_return, "h")]
+      [[:id, 3], Digitalbits::Memo.new(:memo_id, 3)],
+      [[:text, "h"], Digitalbits::Memo.new(:memo_text, "h")],
+      [[:hash, "h"], Digitalbits::Memo.new(:memo_hash, "h")],
+      [[:return, "h"], Digitalbits::Memo.new(:memo_return, "h")]
     ].each do |memo_shorthand, expected|
       context "when #{memo_shorthand[0]} shorthand is provided" do
         let(:memo) { memo_shorthand }
@@ -147,38 +147,38 @@ RSpec.describe DigitalBits::TransactionBuilder do
 
     it "returns self" do
       expect(builder.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
-      )).to be_an_instance_of(DigitalBits::TransactionBuilder)
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
+      )).to be_an_instance_of(Digitalbits::TransactionBuilder)
     end
   end
 
   describe ".clear_operations" do
     it "can clear operations" do
       builder = builder.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
       ).clear_operations
       expect(builder.operations).to eql([])
     end
 
     it "returns self" do
       expect(builder.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
-      ).clear_operations).to be_an_instance_of(DigitalBits::TransactionBuilder)
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
+      ).clear_operations).to be_an_instance_of(Digitalbits::TransactionBuilder)
     end
   end
 
   describe ".set_source_account" do
     it "allows source account to be updated" do
-      kp = DigitalBits::KeyPair.random
+      kp = Digitalbits::KeyPair.random
       builder.set_source_account(kp)
       expect(builder.source_account).to eql(kp)
     end
 
     it "returns self" do
-      kp = DigitalBits::KeyPair.random
+      kp = Digitalbits::KeyPair.random
       expect(
         builder.set_source_account(kp)
-      ).to be_an_instance_of(DigitalBits::TransactionBuilder)
+      ).to be_an_instance_of(Digitalbits::TransactionBuilder)
     end
   end
 
@@ -189,7 +189,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     it "returns self" do
-      expect(builder.set_sequence_number(3)).to be_an_instance_of(DigitalBits::TransactionBuilder)
+      expect(builder.set_sequence_number(3)).to be_an_instance_of(Digitalbits::TransactionBuilder)
     end
 
     it "raises an error for bad sequence number" do
@@ -219,7 +219,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     it "returns self" do
-      expect(builder.set_timeout(10)).to be_an_instance_of(DigitalBits::TransactionBuilder)
+      expect(builder.set_timeout(10)).to be_an_instance_of(Digitalbits::TransactionBuilder)
     end
   end
 
@@ -233,7 +233,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     it "works and returns self" do
-      expect(builder.set_memo("Hello").memo).to eql(DigitalBits::Memo.new(:memo_text, "Hello"))
+      expect(builder.set_memo("Hello").memo).to eql(Digitalbits::Memo.new(:memo_text, "Hello"))
     end
   end
 
@@ -246,98 +246,98 @@ RSpec.describe DigitalBits::TransactionBuilder do
     it "returns self" do
       expect(
         builder.set_base_fee(200)
-      ).to be_an_instance_of(DigitalBits::TransactionBuilder)
+      ).to be_an_instance_of(Digitalbits::TransactionBuilder)
     end
   end
 
   describe ".build" do
     it "raises an error for non-integer timebounds" do
-      builder = DigitalBits::TransactionBuilder.new(
+      builder = Digitalbits::TransactionBuilder.new(
         source_account: key_pair,
         sequence_number: 1,
-        time_bounds: DigitalBits::TimeBounds.new(min_time: "not", max_time: "integers")
+        time_bounds: Digitalbits::TimeBounds.new(min_time: "not", max_time: "integers")
       )
       expect {
-        builder.add_operation(DigitalBits::Operation.bump_sequence({bump_to: 1})).build
+        builder.add_operation(Digitalbits::Operation.bump_sequence({bump_to: 1})).build
       }.to raise_error(
         RuntimeError, "TimeBounds.min_time and max_time must be Integers"
       )
     end
 
     it "raises an error for bad TimeBounds range" do
-      builder = DigitalBits::TransactionBuilder.new(
+      builder = Digitalbits::TransactionBuilder.new(
         source_account: key_pair,
         sequence_number: 1,
-        time_bounds: DigitalBits::TimeBounds.new(min_time: Time.now.to_i + 10, max_time: Time.now.to_i)
+        time_bounds: Digitalbits::TimeBounds.new(min_time: Time.now.to_i + 10, max_time: Time.now.to_i)
       )
       expect {
-        builder.add_operation(DigitalBits::Operation.bump_sequence({bump_to: 1})).build
+        builder.add_operation(Digitalbits::Operation.bump_sequence({bump_to: 1})).build
       }.to raise_error(
         RuntimeError, "Timebounds.max_time must be greater than min_time"
       )
     end
 
     it "allows max_time to be zero" do
-      builder.add_operation(DigitalBits::Operation.bump_sequence({bump_to: 1})).build
+      builder.add_operation(Digitalbits::Operation.bump_sequence({bump_to: 1})).build
       expect(builder.time_bounds.max_time).to eql(0)
     end
 
     it "updates sequence number by 1 per build" do
       builder.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
       ).build
       expect(builder.sequence_number).to eql(2)
     end
 
     it "creates transaction successfully" do
-      bump_op = DigitalBits::Operation.bump_sequence({bump_to: 1})
+      bump_op = Digitalbits::Operation.bump_sequence({bump_to: 1})
       builder.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
       ).set_timeout(600).build
       expect(builder.operations).to eql([bump_op])
     end
 
     it "allows for multiple transactions to be created" do
       first_max_time = Time.now.to_i + 1000
-      builder = DigitalBits::TransactionBuilder.new(
+      builder = Digitalbits::TransactionBuilder.new(
         source_account: key_pair,
         sequence_number: 1,
-        time_bounds: DigitalBits::TimeBounds.new(min_time: 0, max_time: first_max_time)
+        time_bounds: Digitalbits::TimeBounds.new(min_time: 0, max_time: first_max_time)
       )
       tx1 = builder.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
       ).build
       expect(tx1.seq_num).to eql(1)
       expect(tx1.operations).to eql([
-        DigitalBits::Operation.bump_sequence({bump_to: 1})
+        Digitalbits::Operation.bump_sequence({bump_to: 1})
       ])
       expect(tx1.time_bounds.max_time).to eql(first_max_time)
 
       tx2 = builder.clear_operations.add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: 2})
+        Digitalbits::Operation.bump_sequence({bump_to: 2})
       ).set_timeout(0).build
       expect(tx2.seq_num).to eql(2)
       expect(tx2.operations).to eql([
-        DigitalBits::Operation.bump_sequence({bump_to: 2})
+        Digitalbits::Operation.bump_sequence({bump_to: 2})
       ])
       expect(tx2.time_bounds.max_time).to eql(0)
 
       expect(builder.sequence_number).to eql(3)
       expect(builder.operations).to eql([
-        DigitalBits::Operation.bump_sequence({bump_to: 2})
+        Digitalbits::Operation.bump_sequence({bump_to: 2})
       ])
     end
   end
 
   describe ".path_payment_strict_receive" do
     it "works" do
-      tx = DigitalBits::TransactionBuilder.path_payment_strict_receive(
-        source_account: DigitalBits::KeyPair.random,
+      tx = Digitalbits::TransactionBuilder.path_payment_strict_receive(
+        source_account: Digitalbits::KeyPair.random,
         sequence_number: 1,
         fee: 100,
-        destination: DigitalBits::KeyPair.random,
-        with: [:alphanum4, "USD", DigitalBits::KeyPair.master, 10],
-        amount: [:alphanum4, "EUR", DigitalBits::KeyPair.master, 9.2]
+        destination: Digitalbits::KeyPair.random,
+        with: [:alphanum4, "USD", Digitalbits::KeyPair.master, 10],
+        amount: [:alphanum4, "EUR", Digitalbits::KeyPair.master, 9.2]
       )
 
       expect(tx.operations.size).to eq(1)
@@ -347,13 +347,13 @@ RSpec.describe DigitalBits::TransactionBuilder do
 
   describe ".path_payment_strict_send" do
     it "works" do
-      tx = DigitalBits::TransactionBuilder.path_payment_strict_send(
-        source_account: DigitalBits::KeyPair.random,
+      tx = Digitalbits::TransactionBuilder.path_payment_strict_send(
+        source_account: Digitalbits::KeyPair.random,
         sequence_number: 1,
         fee: 100,
-        destination: DigitalBits::KeyPair.random,
-        with: [:alphanum4, "USD", DigitalBits::KeyPair.master, 10],
-        amount: [:alphanum4, "EUR", DigitalBits::KeyPair.master, 9.2]
+        destination: Digitalbits::KeyPair.random,
+        with: [:alphanum4, "USD", Digitalbits::KeyPair.master, 10],
+        amount: [:alphanum4, "EUR", Digitalbits::KeyPair.master, 9.2]
       )
 
       expect(tx.operations.size).to eq(1)
@@ -363,7 +363,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
 
   describe "#build_fee_bump" do
     subject do
-      DigitalBits::TransactionBuilder.new(
+      Digitalbits::TransactionBuilder.new(
         source_account: key_pair,
         sequence_number: 1,
         base_fee: base_fee
@@ -371,21 +371,21 @@ RSpec.describe DigitalBits::TransactionBuilder do
     end
 
     let(:inner_tx) do
-      builder = DigitalBits::TransactionBuilder.new(
-        source_account: DigitalBits::KeyPair.random,
+      builder = Digitalbits::TransactionBuilder.new(
+        source_account: Digitalbits::KeyPair.random,
         sequence_number: 1,
         base_fee: base_fee
       )
 
       builder
-        .add_operation(DigitalBits::Operation.bump_sequence(bump_to: 5))
+        .add_operation(Digitalbits::Operation.bump_sequence(bump_to: 5))
         .build
     end
 
     let(:fee_bump_tx) { subject.build_fee_bump(inner_txe: inner_tx.to_envelope(key_pair)) }
 
-    it "returns DigitalBits::FeeBumpTransaction instance" do
-      expect(fee_bump_tx).to be_instance_of(DigitalBits::FeeBumpTransaction)
+    it "returns Digitalbits::FeeBumpTransaction instance" do
+      expect(fee_bump_tx).to be_instance_of(Digitalbits::FeeBumpTransaction)
       expect { fee_bump_tx.to_xdr }.not_to raise_error
     end
 
@@ -400,7 +400,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
     context "when inner tx is v0" do
       let(:inner_tx) do
         subject
-          .add_operation(DigitalBits::Operation.bump_sequence(bump_to: 5))
+          .add_operation(Digitalbits::Operation.bump_sequence(bump_to: 5))
           .build
           .to_v0
       end
@@ -412,7 +412,7 @@ RSpec.describe DigitalBits::TransactionBuilder do
 
     context "when inner tx is invalid" do
       let(:fee_bump_txe) do
-        DigitalBits::TransactionEnvelope.from_xdr(
+        Digitalbits::TransactionEnvelope.from_xdr(
           "AAAABQAAAADgSJG2GOUMy/H9lHyjYZOwyuyytH8y0wWaoc596L+bEgAAAAAAAADIAAAAAgAAAABzdv3ojkzWHMD7KUoXhrPx0GH18vHKV0ZfqpMiEblG1gAAAGQAAAAAAAAACAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA9IYXBweSBiaXJ0aGRheSEAAAAAAQAAAAAAAAABAAAAAOBIkbYY5QzL8f2UfKNhk7DK7LK0fzLTBZqhzn3ov5sSAAAAAAAAAASoF8gAAAAAAAAAAAERuUbWAAAAQK933Dnt1pxXlsf1B5CYn81PLxeYsx+MiV9EGbMdUfEcdDWUySyIkdzJefjpR5ejdXVp/KXosGmNUQ+DrIBlzg0AAAAAAAAAAei/mxIAAABAijIIQpL6KlFefiL4FP8UWQktWEz4wFgGNSaXe7mZdVMuiREntehi1b7MRqZ1h+W+Y0y+Z2HtMunsilT2yS5mAA==",
           "base64"
         )

@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class UpgradeEntryMeta < XDR::Struct
     attribute :upgrade, LedgerUpgrade
     attribute :changes, LedgerEntryChanges

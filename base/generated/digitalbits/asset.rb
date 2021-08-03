@@ -28,7 +28,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Asset < XDR::Union
     include XDR::Namespace
 

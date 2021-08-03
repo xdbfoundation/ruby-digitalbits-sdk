@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SignerKey < XDR::Union
     switch_on SignerKeyType, :type
 

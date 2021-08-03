@@ -1,3 +1,3 @@
-module DigitalBits
-  VERSION = "0.27.0"
+module Digitalbits
+  VERSION = "0.27.2"
 end

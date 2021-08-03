@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class RevokeSponsorshipOp
     class Signer < XDR::Struct
       attribute :account_id, AccountID

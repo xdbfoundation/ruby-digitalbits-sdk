@@ -1,6 +1,6 @@
-RSpec.describe DigitalBits::PathPaymentStrictReceiveResult, "#send_amount" do
+RSpec.describe Digitalbits::PathPaymentStrictReceiveResult, "#send_amount" do
   context "when the result is not successful" do
-    subject { DigitalBits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_malformed) }
+    subject { Digitalbits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_malformed) }
 
     it "raises an exception if the result is not successful" do
       expect { subject.send_amount }.to raise_error(XDR::ArmNotSetError)
@@ -8,10 +8,10 @@ RSpec.describe DigitalBits::PathPaymentStrictReceiveResult, "#send_amount" do
   end
 
   context "when the result has no claimed offers" do
-    let(:simple_success) { DigitalBits::SimplePaymentResult.new(amount: 100) }
-    let(:path_success) { DigitalBits::PathPaymentStrictReceiveResult::Success.new(last: simple_success) }
+    let(:simple_success) { Digitalbits::SimplePaymentResult.new(amount: 100) }
+    let(:path_success) { Digitalbits::PathPaymentStrictReceiveResult::Success.new(last: simple_success) }
 
-    subject { DigitalBits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
+    subject { Digitalbits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
 
     it "returns the amount from the 'last' component" do
       expect(subject.send_amount).to eql(100)
@@ -19,19 +19,19 @@ RSpec.describe DigitalBits::PathPaymentStrictReceiveResult, "#send_amount" do
   end
 
   context "with simple 1-hop result" do
-    let(:simple_success) { DigitalBits::SimplePaymentResult.new(amount: 100) }
+    let(:simple_success) { Digitalbits::SimplePaymentResult.new(amount: 100) }
     let(:offers) do
-      [DigitalBits::ClaimOfferAtom.new(asset_bought: DigitalBits::Asset.native, amount_bought: 200)]
+      [Digitalbits::ClaimOfferAtom.new(asset_bought: Digitalbits::Asset.native, amount_bought: 200)]
     end
 
     let(:path_success) do
-      DigitalBits::PathPaymentStrictReceiveResult::Success.new({
+      Digitalbits::PathPaymentStrictReceiveResult::Success.new({
         offers: offers,
         last: simple_success
       })
     end
 
-    subject { DigitalBits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
+    subject { Digitalbits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
 
     it "returns the amount from the ClaimOfferAtom" do
       expect(subject.send_amount).to eql(200)
@@ -39,22 +39,22 @@ RSpec.describe DigitalBits::PathPaymentStrictReceiveResult, "#send_amount" do
   end
 
   context "with 1-hop result that claimed multiple offers" do
-    let(:simple_success) { DigitalBits::SimplePaymentResult.new(amount: 100) }
+    let(:simple_success) { Digitalbits::SimplePaymentResult.new(amount: 100) }
     let(:offers) do
       [
-        DigitalBits::ClaimOfferAtom.new(asset_bought: DigitalBits::Asset.native, amount_bought: 200),
-        DigitalBits::ClaimOfferAtom.new(asset_bought: DigitalBits::Asset.native, amount_bought: 200)
+        Digitalbits::ClaimOfferAtom.new(asset_bought: Digitalbits::Asset.native, amount_bought: 200),
+        Digitalbits::ClaimOfferAtom.new(asset_bought: Digitalbits::Asset.native, amount_bought: 200)
       ]
     end
 
     let(:path_success) do
-      DigitalBits::PathPaymentStrictReceiveResult::Success.new({
+      Digitalbits::PathPaymentStrictReceiveResult::Success.new({
         offers: offers,
         last: simple_success
       })
     end
 
-    subject { DigitalBits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
+    subject { Digitalbits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
 
     it "returns the summed amount from the ClaimOfferAtoms" do
       expect(subject.send_amount).to eql(400)
@@ -62,24 +62,24 @@ RSpec.describe DigitalBits::PathPaymentStrictReceiveResult, "#send_amount" do
   end
 
   context "with multi-hop result that claimed multiple offers" do
-    let(:simple_success) { DigitalBits::SimplePaymentResult.new(amount: 100) }
-    let(:otherAsset) { DigitalBits::Asset.alphanum4("USD", DigitalBits::KeyPair.random) }
+    let(:simple_success) { Digitalbits::SimplePaymentResult.new(amount: 100) }
+    let(:otherAsset) { Digitalbits::Asset.alphanum4("USD", Digitalbits::KeyPair.random) }
     let(:offers) do
       [
-        DigitalBits::ClaimOfferAtom.new(asset_bought: DigitalBits::Asset.native, amount_bought: 200),
-        DigitalBits::ClaimOfferAtom.new(asset_bought: DigitalBits::Asset.native, amount_bought: 200),
-        DigitalBits::ClaimOfferAtom.new(asset_bought: otherAsset, amount_bought: 200)
+        Digitalbits::ClaimOfferAtom.new(asset_bought: Digitalbits::Asset.native, amount_bought: 200),
+        Digitalbits::ClaimOfferAtom.new(asset_bought: Digitalbits::Asset.native, amount_bought: 200),
+        Digitalbits::ClaimOfferAtom.new(asset_bought: otherAsset, amount_bought: 200)
       ]
     end
 
     let(:path_success) do
-      DigitalBits::PathPaymentStrictReceiveResult::Success.new({
+      Digitalbits::PathPaymentStrictReceiveResult::Success.new({
         offers: offers,
         last: simple_success
       })
     end
 
-    subject { DigitalBits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
+    subject { Digitalbits::PathPaymentStrictReceiveResult.new(:path_payment_strict_receive_success, path_success) }
 
     it "returns the summed amount from the ClaimOfferAtoms" do
       expect(subject.send_amount).to eql(400)

@@ -16,7 +16,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Claimant < XDR::Union
     include XDR::Namespace
 

@@ -21,7 +21,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class PathPaymentStrictReceiveResult < XDR::Union
     include XDR::Namespace
 

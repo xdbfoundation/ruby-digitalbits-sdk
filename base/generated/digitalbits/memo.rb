@@ -20,7 +20,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Memo < XDR::Union
     switch_on MemoType, :type
 

@@ -20,7 +20,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerEntry
     class Data < XDR::Union
       switch_on LedgerEntryType, :type

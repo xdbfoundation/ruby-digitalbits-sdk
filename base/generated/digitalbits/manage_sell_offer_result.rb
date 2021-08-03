@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ManageSellOfferResult < XDR::Union
     switch_on ManageSellOfferResultCode, :code
 

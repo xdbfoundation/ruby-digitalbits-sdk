@@ -5,18 +5,18 @@ require 'xdr'
 
 # === xdr source ============================================================
 #
-#   struct ClawbackOp
+#   enum DigitalBitsValueType
 #   {
-#       Asset asset;
-#       MuxedAccount from;
-#       int64 amount;
+#       DIGITALBITS_VALUE_BASIC = 0,
+#       DIGITALBITS_VALUE_SIGNED = 1
 #   };
 #
 # ===========================================================================
-module DigitalBits
-  class ClawbackOp < XDR::Struct
-    attribute :asset,  Asset
-    attribute :from,   MuxedAccount
-    attribute :amount, Int64
+module Digitalbits
+  class DigitalBitsValueType < XDR::Enum
+    member :digitalbits_value_basic,  0
+    member :digitalbits_value_signed, 1
+
+    seal
   end
 end

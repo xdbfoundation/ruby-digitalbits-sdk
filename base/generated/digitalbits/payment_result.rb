@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class PaymentResult < XDR::Union
     switch_on PaymentResultCode, :code
 

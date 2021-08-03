@@ -24,7 +24,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TrustLineEntry
     class Ext < XDR::Union
       include XDR::Namespace

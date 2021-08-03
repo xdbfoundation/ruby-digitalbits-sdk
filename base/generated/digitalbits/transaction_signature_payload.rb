@@ -20,7 +20,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionSignaturePayload < XDR::Struct
     include XDR::Namespace
 

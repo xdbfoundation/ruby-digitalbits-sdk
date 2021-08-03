@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ClaimClaimableBalanceResult < XDR::Union
     switch_on ClaimClaimableBalanceResultCode, :code
 

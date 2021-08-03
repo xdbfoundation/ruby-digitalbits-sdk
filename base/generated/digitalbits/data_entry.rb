@@ -21,7 +21,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class DataEntry < XDR::Struct
     include XDR::Namespace
 

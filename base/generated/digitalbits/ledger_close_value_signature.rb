@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerCloseValueSignature < XDR::Struct
     attribute :node_id,   NodeID
     attribute :signature, Signature

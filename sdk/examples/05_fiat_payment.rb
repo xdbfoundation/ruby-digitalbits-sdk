@@ -1,6 +1,6 @@
 require "digitalbits-sdk"
 
-client = DigitalBits::Client.default_testnet
+client = Digitalbits::Client.default_testnet
 
 def post_transaction(client, envelope)
   client.frontier.transactions._post(tx: envelope)
@@ -10,17 +10,17 @@ rescue => e
 end
 
 puts "Creating issuer for USD..."
-issuer = DigitalBits::KeyPair.random
+issuer = Digitalbits::KeyPair.random
 client.friendbot(issuer)
-asset = DigitalBits::Asset.alphanum4("USD", issuer)
+asset = Digitalbits::Asset.alphanum4("USD", issuer)
 
-set_trustline_op = DigitalBits::Operation.change_trust({
+set_trustline_op = Digitalbits::Operation.change_trust({
   line: asset,
   limit: 1000
 })
 
 puts "Creating distribution account for USD..."
-distribution = DigitalBits::KeyPair.random
+distribution = Digitalbits::KeyPair.random
 client.friendbot(distribution)
 
 puts "Retrieving the distribution account's current sequence number..."
@@ -30,7 +30,7 @@ puts "Retrieving issuers's current sequence number..."
 issuer_seq_num = client.account_info(issuer.address).sequence.to_i
 
 puts "Adding a trustline from the distribution account to the issuer..."
-dist_builder = DigitalBits::TransactionBuilder.new(
+dist_builder = Digitalbits::TransactionBuilder.new(
   source_account: distribution,
   sequence_number: dist_seq_num + 1
 )
@@ -40,11 +40,11 @@ envelope = set_trustline_tx.to_envelope(distribution).to_xdr(:base64)
 post_transaction(client, envelope)
 
 puts "Sending the funds to the distribution account..."
-pay_dist_tx = DigitalBits::TransactionBuilder.new(
+pay_dist_tx = Digitalbits::TransactionBuilder.new(
   source_account: issuer,
   sequence_number: issuer_seq_num + 1
 ).add_operation(
-  DigitalBits::Operation.payment({
+  Digitalbits::Operation.payment({
     destination: distribution,
     amount: [asset, 1000]
   })
@@ -54,14 +54,14 @@ envelope = pay_dist_tx.to_envelope(issuer).to_xdr(:base64)
 post_transaction(client, envelope)
 
 puts "Creating random sender..."
-from = DigitalBits::KeyPair.random
+from = Digitalbits::KeyPair.random
 client.friendbot(from)
 
 puts "Retrieving sender's current sequence number..."
 from_seq_num = client.account_info(from.address).sequence.to_i
 
 puts "Adding a trustline from the sender to issuer..."
-set_trustline_tx = DigitalBits::TransactionBuilder.new(
+set_trustline_tx = Digitalbits::TransactionBuilder.new(
   source_account: from,
   sequence_number: from_seq_num + 1
 ).add_operation(set_trustline_op).set_timeout(600).build
@@ -72,7 +72,7 @@ post_transaction(client, envelope)
 puts "Funding the sender's balance..."
 dist_builder.clear_operations
 pay_sender_tx = dist_builder.add_operation(
-  DigitalBits::Operation.payment({
+  Digitalbits::Operation.payment({
     destination: from,
     amount: [asset, 100]
   })
@@ -82,7 +82,7 @@ envelope = pay_sender_tx.to_envelope(distribution).to_xdr(:base64)
 post_transaction(client, envelope)
 
 puts "Creating random recipient..."
-recipient = DigitalBits::KeyPair.random
+recipient = Digitalbits::KeyPair.random
 client.friendbot(recipient)
 
 puts "Retrieving recipient's current sequence number..."
@@ -92,7 +92,7 @@ puts "Retrieving sender's current sequence number..."
 from_seq_num = client.account_info(from.address).sequence.to_i
 
 puts "Adding a trustline from the recipient to issuer..."
-set_trustline_tx = DigitalBits::TransactionBuilder.new(
+set_trustline_tx = Digitalbits::TransactionBuilder.new(
   source_account: recipient,
   sequence_number: recipient_seq_num + 1
 ).add_operation(set_trustline_op).set_timeout(600).build
@@ -102,11 +102,11 @@ post_transaction(client, envelope)
 
 puts "Constructing fiat payment transaction..."
 # construct payment transaction
-payment_tx = DigitalBits::TransactionBuilder.new(
+payment_tx = Digitalbits::TransactionBuilder.new(
   source_account: from,
   sequence_number: from_seq_num + 1
 ).add_operation(
-  DigitalBits::Operation.payment({
+  Digitalbits::Operation.payment({
     destination: recipient,
     amount: [asset, 10]
   })

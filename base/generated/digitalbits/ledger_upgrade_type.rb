@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerUpgradeType < XDR::Enum
     member :ledger_upgrade_version,         1
     member :ledger_upgrade_base_fee,        2

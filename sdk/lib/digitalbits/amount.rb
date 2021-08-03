@@ -1,11 +1,11 @@
-module DigitalBits
+module Digitalbits
   class Amount
     attr_reader :amount
     attr_reader :asset
 
     # @param [Fixnum] amount
-    # @param [DigitalBits::Asset] asset
-    def initialize(amount, asset = DigitalBits::Asset.native)
+    # @param [Digitalbits::Asset] asset
+    def initialize(amount, asset = Digitalbits::Asset.native)
       # TODO: how are we going to handle decimal considerations?
 
       @amount = amount
@@ -13,7 +13,7 @@ module DigitalBits
     end
 
     # @return [Array(Symbol, Fixnum)] in case of a native asset
-    # @return [Array(Symbol, String, DigitalBits::KeyPair, Fixnum)] in case of alphanum asset
+    # @return [Array(Symbol, String, Digitalbits::KeyPair, Fixnum)] in case of alphanum asset
     def to_payment
       case asset.type
       when AssetType.asset_type_native
@@ -30,7 +30,7 @@ module DigitalBits
     end
 
     def inspect
-      "#<DigitalBits::Amount #{asset}(#{amount})>"
+      "#<Digitalbits::Amount #{asset}(#{amount})>"
     end
   end
 end

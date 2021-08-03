@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ChangeTrustOp < XDR::Struct
     attribute :line,  Asset
     attribute :limit, Int64

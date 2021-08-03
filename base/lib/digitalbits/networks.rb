@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   # Provides a container for well-known network passphrases, such as the main network and SDF test network
   module Networks
     PUBLIC = "LiveNet Global DigitalBits Network ; February 2021"
@@ -12,16 +12,16 @@ module DigitalBits
   #        methods of specifying a network if you need two threads in the same process to communicate with
   #        different networks
   #
-  # @see DigitalBits.on_network
+  # @see Digitalbits.on_network
   mattr_accessor :default_network, default: Networks::TESTNET
 
   # DigitalBits network passphrase selected for current thread
   #
-  # @see DigitalBits.current_network
-  # @see DigitalBits.on_network
+  # @see Digitalbits.current_network
+  # @see Digitalbits.on_network
   thread_mattr_accessor :network
 
-  # Returns the passphrase for the network currently active per-thread with a fallback to `DigitalBits.default_network`
+  # Returns the passphrase for the network currently active per-thread with a fallback to `Digitalbits.default_network`
   def self.current_network
     network.presence || default_network
   end

@@ -37,7 +37,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TrustLineEntry < XDR::Struct
     include XDR::Namespace
 

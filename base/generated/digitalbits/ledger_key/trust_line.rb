@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerKey
     class TrustLine < XDR::Struct
       attribute :account_id, AccountID

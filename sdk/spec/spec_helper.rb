@@ -15,7 +15,7 @@ CONFIG = {
 }
 
 RSpec.configure do |config|
-  config.include DigitalBits::DSL
+  config.include Digitalbits::DSL
   config.filter_run_when_matching focus: true
   config.run_all_when_everything_filtered = true
 

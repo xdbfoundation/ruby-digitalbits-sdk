@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerUpgrade < XDR::Union
     switch_on LedgerUpgradeType, :type
 

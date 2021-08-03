@@ -17,7 +17,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class OperationID < XDR::Union
     include XDR::Namespace
 

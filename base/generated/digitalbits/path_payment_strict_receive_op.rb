@@ -20,7 +20,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class PathPaymentStrictReceiveOp < XDR::Struct
     attribute :send_asset,  Asset
     attribute :send_max,    Int64

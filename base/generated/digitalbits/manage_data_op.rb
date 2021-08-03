@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ManageDataOp < XDR::Struct
     attribute :data_name,  String64
     attribute :data_value, XDR::Option[DataValue]

@@ -1,41 +1,41 @@
 require "digitalbits-sdk"
 require "hyperclient"
 
-$client = DigitalBits::Client.default_testnet
-$client_master_kp = DigitalBits::KeyPair.random
-$client_signer_kp1 = DigitalBits::KeyPair.random
-$client_signer_kp2 = DigitalBits::KeyPair.random
-$server_kp = DigitalBits::KeyPair.random
+$client = Digitalbits::Client.default_testnet
+$client_master_kp = Digitalbits::KeyPair.random
+$client_signer_kp1 = Digitalbits::KeyPair.random
+$client_signer_kp2 = Digitalbits::KeyPair.random
+$server_kp = Digitalbits::KeyPair.random
 
 def setup_multisig
   # create funded account
-  # On mainet there is no friendbot, use DigitalBits::Client.create_account instead
+  # On mainet there is no friendbot, use Digitalbits::Client.create_account instead
   $client.friendbot($client_master_kp)
 
   # get account sequence number for next transaction
   sequence_number = $client.account_info($client_master_kp.address).sequence.to_i + 1
 
   # build the non-master signers to be added to the account
-  signer1 = DigitalBits::Signer.new(
-    key: DigitalBits::SignerKey.ed25519($client_signer_kp1),
+  signer1 = Digitalbits::Signer.new(
+    key: Digitalbits::SignerKey.ed25519($client_signer_kp1),
     weight: 1
   )
-  signer2 = DigitalBits::Signer.new(
-    key: DigitalBits::SignerKey.ed25519($client_signer_kp2),
+  signer2 = Digitalbits::Signer.new(
+    key: Digitalbits::SignerKey.ed25519($client_signer_kp2),
     weight: 1
   )
 
   # construct transaction
-  builder = DigitalBits::TransactionBuilder.new(
+  builder = Digitalbits::TransactionBuilder.new(
     source_account: $client_master_kp,
     sequence_number: sequence_number
   )
   tx = builder.add_operation(
-    DigitalBits::Operation.set_options({signer: signer1})
+    Digitalbits::Operation.set_options({signer: signer1})
   ).add_operation(
-    DigitalBits::Operation.set_options({signer: signer2})
+    Digitalbits::Operation.set_options({signer: signer2})
   ).add_operation(
-    DigitalBits::Operation.set_options({
+    Digitalbits::Operation.set_options({
       low_threshold: 1,
       med_threshold: 2,
       high_threshold: 3
@@ -55,7 +55,7 @@ end
 def example_verify_challenge_tx_threshold
   # 1. The wallet makes a GET request to /auth,
   # 2. The server receives the request, and returns the challenge xdr.
-  envelope_xdr = DigitalBits::SEP10.build_challenge_tx(
+  envelope_xdr = Digitalbits::SEP10.build_challenge_tx(
     server: $server_kp,
     client: $client_master_kp,
     anchor_name: "SDF",
@@ -65,7 +65,7 @@ def example_verify_challenge_tx_threshold
   #    the accounts signers to reach the medium threshold on the account.
   #    `envelope.signatures` already contains the server's signature, so the wallet
   #    adds to the list.
-  envelope = DigitalBits::TransactionEnvelope.from_xdr(envelope_xdr, "base64")
+  envelope = Digitalbits::TransactionEnvelope.from_xdr(envelope_xdr, "base64")
   envelope.signatures += [
     envelope.tx.sign_decorated($client_master_kp),
     envelope.tx.sign_decorated($client_signer_kp1),
@@ -75,11 +75,11 @@ def example_verify_challenge_tx_threshold
 
   # 4. The wallet makes a POST request to /auth containing the signed challenge
   # 5. The server verifies the challenge transaction
-  envelope, client_master_address = DigitalBits::SEP10.read_challenge_tx(
+  envelope, client_master_address = Digitalbits::SEP10.read_challenge_tx(
     challenge_xdr: envelope_xdr,
     server: $server_kp
   )
-  account = DigitalBits::Account.from_address(client_master_address)
+  account = Digitalbits::Account.from_address(client_master_address)
   begin
     # Get all signers and thresholds for account
     info = $client.account_info(account)
@@ -88,10 +88,10 @@ def example_verify_challenge_tx_threshold
     # In this situation, all the server can do is verify that the client master
     # keypair has signed the transaction.
     begin
-      DigitalBits::SEP10.verify_challenge_tx(
+      Digitalbits::SEP10.verify_challenge_tx(
         challenge_xdr: envelope_xdr, server: $server_kp
       )
-    rescue DigitalBits::InvalidSep10ChallengeError => e
+    rescue Digitalbits::InvalidSep10ChallengeError => e
       puts "You should handle possible exceptions:"
       puts e
     else
@@ -101,13 +101,13 @@ def example_verify_challenge_tx_threshold
     # The account exists, so the server should check if the signatures reach the
     # medium threshold on the account
     begin
-      signers_found = DigitalBits::SEP10.verify_challenge_tx_threshold(
+      signers_found = Digitalbits::SEP10.verify_challenge_tx_threshold(
         challenge_xdr: envelope_xdr,
         server: $server_kp,
         threshold: info.thresholds["med_threshold"],
         signers: Set.new(info.signers)
       )
-    rescue DigitalBits::InvalidSep10ChallengeError => e
+    rescue Digitalbits::InvalidSep10ChallengeError => e
       puts "You should handle possible exceptions:"
       puts e
     else
@@ -122,6 +122,6 @@ def example_verify_challenge_tx_threshold
   end
 end
 
-# Comment out setup_multisig to execute DigitalBits::Account.verify_challenge_transaction
+# Comment out setup_multisig to execute Digitalbits::Account.verify_challenge_transaction
 setup_multisig
 example_verify_challenge_tx_threshold

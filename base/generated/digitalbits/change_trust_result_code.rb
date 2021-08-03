@@ -20,7 +20,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ChangeTrustResultCode < XDR::Enum
     member :change_trust_success,          0
     member :change_trust_malformed,        -1

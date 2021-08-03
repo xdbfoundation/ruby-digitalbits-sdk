@@ -1,35 +1,35 @@
 require "bigdecimal"
 
-module DigitalBits
+module Digitalbits
   class Operation
     MAX_INT64 = 2**63 - 1
     TRUST_LINE_FLAGS_MAPPING = {
-      full: DigitalBits::TrustLineFlags.authorized_flag,
-      maintain_liabilities: DigitalBits::TrustLineFlags.authorized_to_maintain_liabilities_flag,
-      clawback_enabled: DigitalBits::TrustLineFlags.trustline_clawback_enabled_flag
+      full: Digitalbits::TrustLineFlags.authorized_flag,
+      maintain_liabilities: Digitalbits::TrustLineFlags.authorized_to_maintain_liabilities_flag,
+      clawback_enabled: false
     }.freeze
 
     class << self
-      include DigitalBits::DSL
+      include Digitalbits::DSL
       #
-      # Construct a new DigitalBits::Operation from the provided
+      # Construct a new Digitalbits::Operation from the provided
       # source account and body
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :source_account
-      # @option attributes [DigitalBits::Operation::Body] :body
+      # @option attributes [Digitalbits::KeyPair] :source_account
+      # @option attributes [Digitalbits::Operation::Body] :body
       #
-      # @return [DigitalBits::Operation] the built operation
+      # @return [Digitalbits::Operation] the built operation
       def make(attributes = {})
         source_account = attributes[:source_account]
 
-        if source_account && !source_account.is_a?(DigitalBits::KeyPair)
+        if source_account && !source_account.is_a?(Digitalbits::KeyPair)
           raise ArgumentError, "Bad :source_account"
         end
 
-        body = DigitalBits::Operation::Body.new(*attributes[:body])
+        body = Digitalbits::Operation::Body.new(*attributes[:body])
 
-        DigitalBits::Operation.new(
+        Digitalbits::Operation.new(
           body: body,
           source_account: source_account&.muxed_account
         )
@@ -40,13 +40,13 @@ module DigitalBits
       # in the necessary XDR structs to be included within a
       # transactions `operations` array.
       #
-      # @see DigitalBits::Asset
+      # @see Digitalbits::Asset
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :destination the receiver of the payment
+      # @option attributes [Digitalbits::KeyPair] :destination the receiver of the payment
       # @option attributes [Array] :amount the amount to pay
-      # @return [DigitalBits::Operation] the built operation, containing a
-      #                              DigitalBits::PaymentOp body
+      # @return [Digitalbits::Operation] the built operation, containing a
+      #                              Digitalbits::PaymentOp body
       def payment(attributes = {})
         destination = attributes[:destination]
         asset, amount = get_asset_amount(attributes[:amount])
@@ -70,15 +70,15 @@ module DigitalBits
       #
       # @deprecated Please use Operation.path_payment_strict_receive
       #
-      # @see DigitalBits::Asset
+      # @see Digitalbits::Asset
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :destination the receiver of the payment
+      # @option attributes [Digitalbits::KeyPair] :destination the receiver of the payment
       # @option attributes [Array] :amount the destination asset and the amount to pay
       # @option attributes [Array] :with the source asset and maximum allowed source amount to pay with
-      # @option attributes [Array<DigitalBits::Asset>] :path the payment path to use
+      # @option attributes [Array<Digitalbits::Asset>] :path the payment path to use
       #
-      # @return [DigitalBits::Operation] the built operation, containing a DigitalBits::PaymentOp body
+      # @return [Digitalbits::Operation] the built operation, containing a Digitalbits::PaymentOp body
       #
       def path_payment(attributes = {})
         path_payment_strict_receive(attributes)
@@ -89,22 +89,22 @@ module DigitalBits
       # in the necessary XDR structs to be included within a
       # transactions `operations` array.
       #
-      # @see DigitalBits::Asset
+      # @see Digitalbits::Asset
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :destination the receiver of the payment
+      # @option attributes [Digitalbits::KeyPair] :destination the receiver of the payment
       # @option attributes [Array] :amount the destination asset and the amount to pay
       # @option attributes [Array] :with the source asset and maximum allowed source amount to pay with
-      # @option attributes [Array<DigitalBits::Asset>] :path the payment path to use
+      # @option attributes [Array<Digitalbits::Asset>] :path the payment path to use
       #
-      # @return [DigitalBits::Operation] the built operation, containing a DigitalBits::PaymentOp body
+      # @return [Digitalbits::Operation] the built operation, containing a Digitalbits::PaymentOp body
       #
       def path_payment_strict_receive(attributes = {})
         destination = attributes[:destination]
         asset, amount = get_asset_amount(attributes[:amount])
         send_asset, send_max = get_asset_amount(attributes[:with])
         path = (attributes[:path] || []).map { |p|
-          p.is_a?(Array) ? DigitalBits::Asset.send(*p) : p
+          p.is_a?(Array) ? Digitalbits::Asset.send(*p) : p
         }
 
         raise ArgumentError unless destination.is_a?(KeyPair)
@@ -127,22 +127,22 @@ module DigitalBits
       # in the necessary XDR structs to be included within a
       # transactions `operations` array.
       #
-      # @see DigitalBits::Asset
+      # @see Digitalbits::Asset
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :destination the receiver of the payment
+      # @option attributes [Digitalbits::KeyPair] :destination the receiver of the payment
       # @option attributes [Array] :amount the destination asset and the minimum amount of destination asset to be received
       # @option attributes [Array] :with the source asset and amount to pay with
-      # @option attributes [Array<DigitalBits::Asset>] :path the payment path to use
+      # @option attributes [Array<Digitalbits::Asset>] :path the payment path to use
       #
-      # @return [DigitalBits::Operation] the built operation, containing a DigitalBits::PaymentOp body
+      # @return [Digitalbits::Operation] the built operation, containing a Digitalbits::PaymentOp body
       #
       def path_payment_strict_send(attributes = {})
         destination = attributes[:destination]
         asset, dest_min = get_asset_amount(attributes[:amount])
         send_asset, send_amount = get_asset_amount(attributes[:with])
         path = (attributes[:path] || []).map { |p|
-          p.is_a?(Array) ? DigitalBits::Asset.send(*p) : p
+          p.is_a?(Array) ? Digitalbits::Asset.send(*p) : p
         }
 
         raise ArgumentError unless destination.is_a?(KeyPair)
@@ -180,12 +180,12 @@ module DigitalBits
       # transactions `operations` array.
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::Asset] :line the asset to trust
+      # @option attributes [Digitalbits::Asset] :line the asset to trust
       # @option attributes [Fixnum] :limit the maximum amount to trust, defaults to max int64,
       #                                    if the limit is set to 0 it deletes the trustline.
       #
-      # @return [DigitalBits::Operation] the built operation, containing a
-      #                              DigitalBits::ChangeTrustOp body
+      # @return [Digitalbits::Operation] the built operation, containing a
+      #                              Digitalbits::ChangeTrustOp body
       def change_trust(attributes = {})
         line = attributes[:line]
         unless line.is_a?(Asset)
@@ -209,7 +209,7 @@ module DigitalBits
       # Helper method to create a valid CreateClaimableBalanceOp, ready to be used
       # within a transactions `operations` array.
       #
-      # @see DigitalBits::DSL::Claimant
+      # @see Digitalbits::DSL::Claimant
       #
       # @param asset [Asset] the asset to transfer to a claimable balance
       # @param amount [Fixnum] the amount of `asset` to put into a claimable balance
@@ -225,11 +225,11 @@ module DigitalBits
       # Helper method to create a valid CreateClaimableBalanceOp, ready to be used
       # within a transactions `operations` array.
       #
-      # @see DigitalBits::DSL::Claimant
+      # @see Digitalbits::DSL::Claimant
       #
       # @param balance_id [ClaimableBalanceID] unique ID of claimable balance
       #
-      # @return [Operation] the built operation, containing a DigitalBits::ChangeTrustOp body
+      # @return [Operation] the built operation, containing a Digitalbits::ChangeTrustOp body
       def claim_claimable_balance(balance_id:, **attributes)
         op = ClaimClaimableBalanceOp.new(balance_id: balance_id)
 
@@ -344,18 +344,18 @@ module DigitalBits
       # transactions `operations` array.
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :inflation_dest
-      # @option attributes [Array<DigitalBits::AccountFlags>] :set flags to set
-      # @option attributes [Array<DigitalBits::AccountFlags>] :clear flags to clear
+      # @option attributes [Digitalbits::KeyPair] :inflation_dest
+      # @option attributes [Array<Digitalbits::AccountFlags>] :set flags to set
+      # @option attributes [Array<Digitalbits::AccountFlags>] :clear flags to clear
       # @option attributes [String] :thresholds
-      # @option attributes [DigitalBits::Signer] :signer
+      # @option attributes [Digitalbits::Signer] :signer
       #
-      # @return [DigitalBits::Operation] the built operation, containing a
-      #                              DigitalBits::SetOptionsOp body
+      # @return [Digitalbits::Operation] the built operation, containing a
+      #                              Digitalbits::SetOptionsOp body
       def set_options(attributes = {})
         op = SetOptionsOp.new
-        op.set_flags = DigitalBits::AccountFlags.make_mask attributes[:set]
-        op.clear_flags = DigitalBits::AccountFlags.make_mask attributes[:clear]
+        op.set_flags = Digitalbits::AccountFlags.make_mask attributes[:set]
+        op.clear_flags = Digitalbits::AccountFlags.make_mask attributes[:clear]
         op.master_weight = attributes[:master_weight]
         op.low_threshold = attributes[:low_threshold]
         op.med_threshold = attributes[:med_threshold]
@@ -366,7 +366,7 @@ module DigitalBits
 
         inflation_dest = attributes[:inflation_dest]
         if inflation_dest
-          raise ArgumentError, "Bad :inflation_dest" unless inflation_dest.is_a?(DigitalBits::KeyPair)
+          raise ArgumentError, "Bad :inflation_dest" unless inflation_dest.is_a?(Digitalbits::KeyPair)
           op.inflation_dest = inflation_dest.account_id
         end
 
@@ -375,15 +375,15 @@ module DigitalBits
         }))
       end
 
-      # @param asset [DigitalBits::Asset]
-      # @param trustor [DigitalBits::KeyPair]
-      # @param flags [{String, Symbol, DigitalBits::TrustLineFlags => true, false}] flags to to set or clear
-      # @param source_account [DigitalBits::KeyPair]  source account (default is `nil`, which will use the source account of transaction)
+      # @param asset [Digitalbits::Asset]
+      # @param trustor [Digitalbits::KeyPair]
+      # @param flags [{String, Symbol, Digitalbits::TrustLineFlags => true, false}] flags to to set or clear
+      # @param source_account [Digitalbits::KeyPair]  source account (default is `nil`, which will use the source account of transaction)
       def set_trust_line_flags(asset:, trustor:, flags: {}, source_account: nil)
-        op = DigitalBits::SetTrustLineFlagsOp.new
+        op = Digitalbits::SetTrustLineFlagsOp.new
         op.trustor = KeyPair(trustor).account_id
         op.asset = Asset(asset)
-        op.attributes = DigitalBits::TrustLineFlags.set_clear_masks(flags)
+        op.attributes = Digitalbits::TrustLineFlags.set_clear_masks(flags)
 
         make(
           source_account: source_account,
@@ -400,12 +400,12 @@ module DigitalBits
       # @deprecated Use `set_trustline_flags` operation
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair] :trustor
-      # @option attributes [DigitalBits::Asset] :asset
+      # @option attributes [Digitalbits::KeyPair] :trustor
+      # @option attributes [Digitalbits::Asset] :asset
       # @option attributes [Symbol, Boolean] :authorize :full, maintain_liabilities or :none
       #
-      # @return [DigitalBits::Operation] the built operation, containing a
-      #                              DigitalBits::AllowTrustOp body
+      # @return [Digitalbits::Operation] the built operation, containing a
+      #                              Digitalbits::AllowTrustOp body
       def allow_trust(attributes = {})
         op = AllowTrustOp.new
 
@@ -417,7 +417,7 @@ module DigitalBits
           asset = Asset.send(*asset)
         end
 
-        raise ArgumentError, "Bad :trustor" unless trustor.is_a?(DigitalBits::KeyPair)
+        raise ArgumentError, "Bad :trustor" unless trustor.is_a?(Digitalbits::KeyPair)
 
         allowed_flags = TRUST_LINE_FLAGS_MAPPING.slice(:full, :maintain_liabilities)
 
@@ -430,7 +430,7 @@ module DigitalBits
           raise ArgumentError, "Bad :authorize, supported values: :full, :maintain_liabilities, :none"
         end
 
-        raise ArgumentError, "Bad :asset" unless asset.type == DigitalBits::AssetType.asset_type_credit_alphanum4
+        raise ArgumentError, "Bad :asset" unless asset.type == Digitalbits::AssetType.asset_type_credit_alphanum4
 
         op.trustor = trustor.account_id
         op.asset = AssetCode.new(:asset_type_credit_alphanum4, asset.code)
@@ -444,9 +444,9 @@ module DigitalBits
       # Helper method to create an account merge operation
       #
       # @param [Hash] attributes the attributes to create the operation with
-      # @option attributes [DigitalBits::KeyPair]  :destination
+      # @option attributes [Digitalbits::KeyPair]  :destination
       #
-      # @return [DigitalBits::Operation] the built operation
+      # @return [Digitalbits::Operation] the built operation
       def account_merge(attributes = {})
         destination = attributes[:destination]
 
@@ -464,7 +464,7 @@ module DigitalBits
       # @param [Hash] attributes the attributes to create the operation with
       # @option attributes [Integer]  :sequence
       #
-      # @return [DigitalBits::Operation] the built operation
+      # @return [Digitalbits::Operation] the built operation
       def inflation(attributes = {})
         sequence = attributes[:sequence]
 
@@ -482,7 +482,7 @@ module DigitalBits
       # @param [Hash] attributes the attributes to create the operation with
       # @option attributes [Integer]  :sequence
       #
-      # @return [DigitalBits::Operation] the built operation
+      # @return [Digitalbits::Operation] the built operation
       def manage_data(attributes = {})
         op = ManageDataOp.new
 
@@ -543,12 +543,12 @@ module DigitalBits
 
       # Helper method to create clawback claimable balance operation
       #
-      # @param [DigitalBits::KeyPair] source_account the attributes to create the operation with
+      # @param [Digitalbits::KeyPair] source_account the attributes to create the operation with
       # @param [String] balance_id `ClaimableBalanceID`, serialized in hex
       #
-      # @return [DigitalBits::Operation] the built operation
+      # @return [Digitalbits::Operation] the built operation
       def clawback_claimable_balance(source_account:, balance_id:)
-        balance_id = DigitalBits::ClaimableBalanceID.from_xdr(balance_id, :hex)
+        balance_id = Digitalbits::ClaimableBalanceID.from_xdr(balance_id, :hex)
         op = ClawbackClaimableBalanceOp.new(balance_id: balance_id)
 
         make(
@@ -563,10 +563,10 @@ module DigitalBits
 
       def get_asset_amount(values)
         amount = interpret_amount(values.last)
-        asset = if values[0].is_a?(DigitalBits::Asset)
+        asset = if values[0].is_a?(Digitalbits::Asset)
           values.first
         else
-          DigitalBits::Asset.send(*values[0...-1])
+          Digitalbits::Asset.send(*values[0...-1])
         end
 
         [asset, amount]
@@ -575,11 +575,11 @@ module DigitalBits
       def interpret_amount(amount)
         case amount
         when String
-          (BigDecimal(amount) * DigitalBits::ONE).floor
+          (BigDecimal(amount) * Digitalbits::ONE).floor
         when Integer
-          amount * DigitalBits::ONE
+          amount * Digitalbits::ONE
         when Numeric
-          (amount * DigitalBits::ONE).floor
+          (amount * Digitalbits::ONE).floor
         else
           raise ArgumentError, "Invalid amount type: #{amount.class}. Must be String or Numeric"
         end
@@ -592,10 +592,10 @@ module DigitalBits
           Price.from_f(bd)
         when Numeric
           Price.from_f(price)
-        when DigitalBits::Price
+        when Digitalbits::Price
           price
         else
-          raise ArgumentError, "Invalid price type: #{price.class}. Must be String, Numeric, or DigitalBits::Price"
+          raise ArgumentError, "Invalid price type: #{price.class}. Must be String, Numeric, or Digitalbits::Price"
         end
       end
     end

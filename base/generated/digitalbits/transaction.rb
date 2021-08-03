@@ -33,7 +33,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Transaction < XDR::Struct
     include XDR::Namespace
 

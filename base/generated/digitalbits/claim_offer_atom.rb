@@ -21,7 +21,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ClaimOfferAtom < XDR::Struct
     attribute :seller_id,     AccountID
     attribute :offer_id,      Int64

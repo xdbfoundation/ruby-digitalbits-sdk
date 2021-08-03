@@ -1,5 +1,5 @@
-RSpec.describe DigitalBits::Thresholds, ".parse" do
-  subject { DigitalBits::Thresholds }
+RSpec.describe Digitalbits::Thresholds, ".parse" do
+  subject { Digitalbits::Thresholds }
   let(:raw) { "\x01\x02\x03\x04" }
   let(:result) { subject.parse raw }
 
@@ -20,8 +20,8 @@ RSpec.describe DigitalBits::Thresholds, ".parse" do
   end
 end
 
-RSpec.describe DigitalBits::Thresholds, ".make" do
-  subject { DigitalBits::Thresholds }
+RSpec.describe Digitalbits::Thresholds, ".make" do
+  subject { Digitalbits::Thresholds }
   let(:good) { {master_weight: 1, low: 2, medium: 3, high: 4} }
 
   it "works" do

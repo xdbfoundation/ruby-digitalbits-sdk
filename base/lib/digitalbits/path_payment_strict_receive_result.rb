@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   class PathPaymentStrictReceiveResult
     # send_amount returns the actual amount paid for the corresponding
     # PathPaymentOp to this result.

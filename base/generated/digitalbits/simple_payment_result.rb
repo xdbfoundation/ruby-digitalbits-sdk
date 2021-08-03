@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SimplePaymentResult < XDR::Struct
     attribute :destination, AccountID
     attribute :asset,       Asset

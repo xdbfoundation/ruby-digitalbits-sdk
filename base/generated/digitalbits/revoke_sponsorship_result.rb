@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class RevokeSponsorshipResult < XDR::Union
     switch_on RevokeSponsorshipResultCode, :code
 

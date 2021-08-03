@@ -42,7 +42,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerKey < XDR::Union
     include XDR::Namespace
 

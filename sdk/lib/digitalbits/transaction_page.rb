@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   class TransactionPage
     include Enumerable
 
@@ -13,7 +13,7 @@ module DigitalBits
       end
     end
 
-    # @return [DigitalBits::TransactionPage]
+    # @return [Digitalbits::TransactionPage]
     def next_page
       self.class.new(@resource.next)
     end

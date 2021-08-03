@@ -1,8 +1,8 @@
 require "digitalbits-base"
 
-module DigitalBits
+module Digitalbits
   module SDK
-    VERSION = ::DigitalBits::VERSION
+    VERSION = ::Digitalbits::VERSION
   end
 
   autoload :Account

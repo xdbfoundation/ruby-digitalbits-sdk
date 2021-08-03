@@ -16,7 +16,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionMeta < XDR::Union
     switch_on XDR::Int, :v
 

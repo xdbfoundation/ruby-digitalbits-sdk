@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerEntryChange < XDR::Union
     switch_on LedgerEntryChangeType, :type
 

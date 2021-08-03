@@ -1,18 +1,18 @@
-module DigitalBits
+module Digitalbits
   class InvalidSep10ChallengeError < StandardError; end
 
   class SEP10
-    include DigitalBits::DSL
+    include Digitalbits::DSL
 
     # Helper method to create a valid challenge transaction which you can use for DigitalBits Web Authentication.
     #
     # @example
-    #   server = DigitalBits::KeyPair.random # SIGNING_KEY from your digitalbits.toml
-    #   user = DigitalBits::KeyPair.from_address('G...')
-    #   DigitalBits::SEP10.build_challenge_tx(server: server, client: user, domain: 'example.com', timeout: 300)
+    #   server = Digitalbits::KeyPair.random # SIGNING_KEY from your digitalbits.toml
+    #   user = Digitalbits::KeyPair.from_address('G...')
+    #   Digitalbits::SEP10.build_challenge_tx(server: server, client: user, domain: 'example.com', timeout: 300)
     #
-    # @param server [DigitalBits::KeyPair] server's signing keypair (SIGNING_KEY in service's digitalbits.toml)
-    # @param client [DigitalBits::KeyPair] account trying to authenticate with the server
+    # @param server [Digitalbits::KeyPair] server's signing keypair (SIGNING_KEY in service's digitalbits.toml)
+    # @param client [Digitalbits::KeyPair] account trying to authenticate with the server
     # @param domain [String] service's domain to be used in the manage_data key
     # @param timeout [Integer] challenge duration (default to 5 minutes)
     #
@@ -22,7 +22,7 @@ module DigitalBits
       if domain.blank? && options.key?(:anchor_name)
         ActiveSupport::Deprecation.new("next release", "digitalbits-sdk").warn <<~MSG
           SEP-10 v2.0.0 requires usage of service home domain instead of anchor name in the challenge transaction.
-          Please update your implementation to use `DigitalBits::SEP10.build_challenge_tx(..., home_domain: 'example.com')`.
+          Please update your implementation to use `Digitalbits::SEP10.build_challenge_tx(..., home_domain: 'example.com')`.
           Using `anchor_name` parameter makes your service incompatible with SEP10-2.0 clients, support for this parameter
           is deprecated and will be removed in the next major release of digitalbits-base.
         MSG
@@ -30,12 +30,12 @@ module DigitalBits
       end
 
       now = Time.now.to_i
-      time_bounds = DigitalBits::TimeBounds.new(
+      time_bounds = Digitalbits::TimeBounds.new(
         min_time: now,
         max_time: now + timeout
       )
 
-      tb = DigitalBits::TransactionBuilder.new(
+      tb = Digitalbits::TransactionBuilder.new(
         source_account: server,
         sequence_number: 0,
         time_bounds: time_bounds
@@ -45,7 +45,7 @@ module DigitalBits
       # cryptographic-quality random string encoded using base64 (for a total of
       # 64 bytes after encoding).
       tb.add_operation(
-        DigitalBits::Operation.manage_data(
+        Digitalbits::Operation.manage_data(
           name: "#{domain} auth",
           value: SecureRandom.base64(48),
           source_account: client
@@ -54,7 +54,7 @@ module DigitalBits
 
       if options.key?(:auth_domain)
         tb.add_operation(
-          DigitalBits::Operation.manage_data(
+          Digitalbits::Operation.manage_data(
             name: "web_auth_domain",
             value: options[:auth_domain],
             source_account: server
@@ -75,17 +75,17 @@ module DigitalBits
     # the signed challenge
     #
     # @example
-    #   sep10 = DigitalBits::SEP10
-    #   server = DigitalBits::KeyPair.random # this should be the SIGNING_KEY from your digitalbits.toml
+    #   sep10 = Digitalbits::SEP10
+    #   server = Digitalbits::KeyPair.random # this should be the SIGNING_KEY from your digitalbits.toml
     #   challenge = sep10.build_challenge_tx(server: server, client: user, domain: domain, timeout: timeout)
     #   envelope, client_address = sep10.read_challenge_tx(server: server, challenge_xdr: challenge)
     #
     # @param challenge_xdr [String] SEP0010 transaction challenge in base64.
-    # @param server [DigitalBits::KeyPair] keypair for server where the challenge was generated.
+    # @param server [Digitalbits::KeyPair] keypair for server where the challenge was generated.
     #
-    # @return [Array(DigitalBits::TransactionEnvelope, String)]
+    # @return [Array(Digitalbits::TransactionEnvelope, String)]
     def self.read_challenge_tx(server:, challenge_xdr:, **options)
-      envelope = DigitalBits::TransactionEnvelope.from_xdr(challenge_xdr, "base64")
+      envelope = Digitalbits::TransactionEnvelope.from_xdr(challenge_xdr, "base64")
       transaction = envelope.tx
 
       if transaction.seq_num != 0
@@ -148,7 +148,7 @@ module DigitalBits
       end
 
       # Mirror the return type of the other SDK's and return a string
-      client_kp = DigitalBits::KeyPair.from_public_key(client_account_id.ed25519!)
+      client_kp = Digitalbits::KeyPair.from_public_key(client_account_id.ed25519!)
 
       [envelope, client_kp.address]
     end
@@ -159,7 +159,7 @@ module DigitalBits
     # signatures match a signer that has been provided as an argument, and those
     # signatures meet a threshold on the account.
     #
-    # @param server [DigitalBits::KeyPair] keypair for server's account.
+    # @param server [Digitalbits::KeyPair] keypair for server's account.
     # @param challenge_xdr [String] SEP0010 challenge transaction in base64.
     # @param signers [{String => Integer}] The signers of client account.
     # @param threshold [Integer] The medThreshold on the client account.
@@ -191,7 +191,7 @@ module DigitalBits
     #
     # If verification succeeds a list of signers that were found is returned, excluding the server account ID.
     #
-    # @param server [DigitalBits::Keypair]  server's signing key
+    # @param server [Digitalbits::Keypair]  server's signing key
     # @param challenge_xdr [String] SEP0010 transaction challenge transaction in base64.
     # @param signers [<String>] The signers of client account.
     #
@@ -233,10 +233,10 @@ module DigitalBits
     # Verifies every signer passed matches a signature on the transaction exactly once,
     # returning a list of unique signers that were found to have signed the transaction.
     #
-    # @param tx_envelope [DigitalBits::TransactionEnvelope] SEP0010 transaction challenge transaction envelope.
+    # @param tx_envelope [Digitalbits::TransactionEnvelope] SEP0010 transaction challenge transaction envelope.
     # @param signers [<String>] The signers of client account.
     #
-    # @return [Set<DigitalBits::KeyPair>]
+    # @return [Set<Digitalbits::KeyPair>]
     def self.verify_tx_signatures(tx_envelope:, signers:)
       signatures = tx_envelope.signatures
       if signatures.empty?
@@ -244,7 +244,7 @@ module DigitalBits
       end
 
       tx_hash = tx_envelope.tx.hash
-      to_keypair = DigitalBits::DSL.method(:KeyPair)
+      to_keypair = Digitalbits::DSL.method(:KeyPair)
       keys_by_hint = signers.map(&to_keypair).index_by(&:signature_hint)
 
       tx_envelope.signatures.each.with_object(Set.new) do |sig, result|
@@ -253,13 +253,13 @@ module DigitalBits
       end
     end
 
-    # Verifies if a DigitalBits::TransactionEnvelope was signed by the given DigitalBits::KeyPair
+    # Verifies if a Digitalbits::TransactionEnvelope was signed by the given Digitalbits::KeyPair
     #
     # @example
-    #   DigitalBits::SEP10.verify_tx_signed_by(tx_envelope: envelope, keypair: keypair)
+    #   Digitalbits::SEP10.verify_tx_signed_by(tx_envelope: envelope, keypair: keypair)
     #
-    # @param tx_envelope [DigitalBits::TransactionEnvelope]
-    # @param keypair [DigitalBits::KeyPair]
+    # @param tx_envelope [Digitalbits::TransactionEnvelope]
+    # @param keypair [Digitalbits::KeyPair]
     #
     # @return [Boolean]
     def self.verify_tx_signed_by(tx_envelope:, keypair:)

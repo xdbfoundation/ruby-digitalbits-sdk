@@ -1,4 +1,4 @@
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -46,10 +46,7 @@ enum OperationType
     CLAIM_CLAIMABLE_BALANCE = 15,
     BEGIN_SPONSORING_FUTURE_RESERVES = 16,
     END_SPONSORING_FUTURE_RESERVES = 17,
-    REVOKE_SPONSORSHIP = 18,
-    CLAWBACK = 19,
-    CLAWBACK_CLAIMABLE_BALANCE = 20,
-    SET_TRUST_LINE_FLAGS = 21
+    REVOKE_SPONSORSHIP = 18
 };
 
 /* CreateAccount
@@ -179,7 +176,7 @@ struct CreatePassiveSellOfferOp
 {
     Asset selling; // A
     Asset buying;  // B
-    int64 amount;  // amount taker gets
+    int64 amount;  // amount taker gets. if set to 0, delete the offer
     Price price;   // cost of A in terms of B
 };
 
@@ -239,9 +236,20 @@ struct ChangeTrustOp
 struct AllowTrustOp
 {
     AccountID trustor;
-    AssetCode asset;
+    union switch (AssetType type)
+    {
+    // ASSET_TYPE_NATIVE is not allowed
+    case ASSET_TYPE_CREDIT_ALPHANUM4:
+        AssetCode4 assetCode4;
 
-    // One of 0, AUTHORIZED_FLAG, or AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG
+    case ASSET_TYPE_CREDIT_ALPHANUM12:
+        AssetCode12 assetCode12;
+
+        // add other asset types here in the future
+    }
+    asset;
+
+    // 0, or any bitwise combination of TrustLineFlags
     uint32 authorize;
 };
 
@@ -364,49 +372,8 @@ case REVOKE_SPONSORSHIP_SIGNER:
     {
         AccountID accountID;
         SignerKey signerKey;
-    } signer;
-};
-
-/* Claws back an amount of an asset from an account
-
-    Threshold: med
-
-    Result: ClawbackResult
-*/
-struct ClawbackOp
-{
-    Asset asset;
-    MuxedAccount from;
-    int64 amount;
-};
-
-/* Claws back a claimable balance
-
-    Threshold: med
-
-    Result: ClawbackClaimableBalanceResult
-*/
-struct ClawbackClaimableBalanceOp
-{
-    ClaimableBalanceID balanceID;
-};
-
-/* SetTrustLineFlagsOp
-
-   Updates the flags of an existing trust line.
-   This is called by the issuer of the related asset.
-
-   Threshold: low
-
-   Result: SetTrustLineFlagsResult
-*/
-struct SetTrustLineFlagsOp
-{
-    AccountID trustor;
-    Asset asset;
-
-    uint32 clearFlags; // which flags to clear
-    uint32 setFlags;   // which flags to set
+    }
+    signer;
 };
 
 /* An operation is the lowest unit of work that a transaction does */
@@ -457,12 +424,6 @@ struct Operation
         void;
     case REVOKE_SPONSORSHIP:
         RevokeSponsorshipOp revokeSponsorshipOp;
-    case CLAWBACK:
-        ClawbackOp clawbackOp;
-    case CLAWBACK_CLAIMABLE_BALANCE:
-        ClawbackClaimableBalanceOp clawbackClaimableBalanceOp;
-    case SET_TRUST_LINE_FLAGS:
-        SetTrustLineFlagsOp setTrustLineFlagsOp;
     }
     body;
 };
@@ -679,7 +640,7 @@ default:
 enum PaymentResultCode
 {
     // codes considered as "success" for the operation
-    PAYMENT_SUCCESS = 0, // payment successfully completed
+    PAYMENT_SUCCESS = 0, // payment successfuly completed
 
     // codes considered as "failure" for the operation
     PAYMENT_MALFORMED = -1,          // bad input
@@ -907,9 +868,7 @@ enum SetOptionsResultCode
     SET_OPTIONS_UNKNOWN_FLAG = -6,           // can't set an unknown flag
     SET_OPTIONS_THRESHOLD_OUT_OF_RANGE = -7, // bad value for weight/threshold
     SET_OPTIONS_BAD_SIGNER = -8,             // signer cannot be masterkey
-    SET_OPTIONS_INVALID_HOME_DOMAIN = -9,    // malformed home domain
-    SET_OPTIONS_AUTH_REVOCABLE_REQUIRED =
-        -10 // auth revocable is required for clawback
+    SET_OPTIONS_INVALID_HOME_DOMAIN = -9     // malformed home domain
 };
 
 union SetOptionsResult switch (SetOptionsResultCode code)
@@ -987,7 +946,7 @@ enum AccountMergeResultCode
 union AccountMergeResult switch (AccountMergeResultCode code)
 {
 case ACCOUNT_MERGE_SUCCESS:
-    int64 sourceAccountBalance; // how much got transferred from source account
+    int64 sourceAccountBalance; // how much got transfered from source account
 default:
     void;
 };
@@ -1112,8 +1071,7 @@ enum BeginSponsoringFutureReservesResultCode
     BEGIN_SPONSORING_FUTURE_RESERVES_RECURSIVE = -3
 };
 
-union BeginSponsoringFutureReservesResult switch (
-    BeginSponsoringFutureReservesResultCode code)
+union BeginSponsoringFutureReservesResult switch (BeginSponsoringFutureReservesResultCode code)
 {
 case BEGIN_SPONSORING_FUTURE_RESERVES_SUCCESS:
     void;
@@ -1132,8 +1090,7 @@ enum EndSponsoringFutureReservesResultCode
     END_SPONSORING_FUTURE_RESERVES_NOT_SPONSORED = -1
 };
 
-union EndSponsoringFutureReservesResult switch (
-    EndSponsoringFutureReservesResultCode code)
+union EndSponsoringFutureReservesResult switch (EndSponsoringFutureReservesResultCode code)
 {
 case END_SPONSORING_FUTURE_RESERVES_SUCCESS:
     void;
@@ -1158,72 +1115,6 @@ enum RevokeSponsorshipResultCode
 union RevokeSponsorshipResult switch (RevokeSponsorshipResultCode code)
 {
 case REVOKE_SPONSORSHIP_SUCCESS:
-    void;
-default:
-    void;
-};
-
-/******* Clawback Result ********/
-
-enum ClawbackResultCode
-{
-    // codes considered as "success" for the operation
-    CLAWBACK_SUCCESS = 0,
-
-    // codes considered as "failure" for the operation
-    CLAWBACK_MALFORMED = -1,
-    CLAWBACK_NOT_CLAWBACK_ENABLED = -2,
-    CLAWBACK_NO_TRUST = -3,
-    CLAWBACK_UNDERFUNDED = -4
-};
-
-union ClawbackResult switch (ClawbackResultCode code)
-{
-case CLAWBACK_SUCCESS:
-    void;
-default:
-    void;
-};
-
-/******* ClawbackClaimableBalance Result ********/
-
-enum ClawbackClaimableBalanceResultCode
-{
-    // codes considered as "success" for the operation
-    CLAWBACK_CLAIMABLE_BALANCE_SUCCESS = 0,
-
-    // codes considered as "failure" for the operation
-    CLAWBACK_CLAIMABLE_BALANCE_DOES_NOT_EXIST = -1,
-    CLAWBACK_CLAIMABLE_BALANCE_NOT_ISSUER = -2,
-    CLAWBACK_CLAIMABLE_BALANCE_NOT_CLAWBACK_ENABLED = -3
-};
-
-union ClawbackClaimableBalanceResult switch (
-    ClawbackClaimableBalanceResultCode code)
-{
-case CLAWBACK_CLAIMABLE_BALANCE_SUCCESS:
-    void;
-default:
-    void;
-};
-
-/******* SetTrustLineFlags Result ********/
-
-enum SetTrustLineFlagsResultCode
-{
-    // codes considered as "success" for the operation
-    SET_TRUST_LINE_FLAGS_SUCCESS = 0,
-
-    // codes considered as "failure" for the operation
-    SET_TRUST_LINE_FLAGS_MALFORMED = -1,
-    SET_TRUST_LINE_FLAGS_NO_TRUST_LINE = -2,
-    SET_TRUST_LINE_FLAGS_CANT_REVOKE = -3,
-    SET_TRUST_LINE_FLAGS_INVALID_STATE = -4
-};
-
-union SetTrustLineFlagsResult switch (SetTrustLineFlagsResultCode code)
-{
-case SET_TRUST_LINE_FLAGS_SUCCESS:
     void;
 default:
     void;
@@ -1285,12 +1176,6 @@ case opINNER:
         EndSponsoringFutureReservesResult endSponsoringFutureReservesResult;
     case REVOKE_SPONSORSHIP:
         RevokeSponsorshipResult revokeSponsorshipResult;
-    case CLAWBACK:
-        ClawbackResult clawbackResult;
-    case CLAWBACK_CLAIMABLE_BALANCE:
-        ClawbackClaimableBalanceResult clawbackClaimableBalanceResult;
-    case SET_TRUST_LINE_FLAGS:
-        SetTrustLineFlagsResult setTrustLineFlagsResult;
     }
     tr;
 default:
@@ -1314,7 +1199,7 @@ enum TransactionResultCode
     txNO_ACCOUNT = -8,           // source account not found
     txINSUFFICIENT_FEE = -9,     // fee is too small
     txBAD_AUTH_EXTRA = -10,      // unused signatures attached to transaction
-    txINTERNAL_ERROR = -11,      // an unknown error occurred
+    txINTERNAL_ERROR = -11,      // an unknown error occured
 
     txNOT_SUPPORTED = -12,         // transaction type not supported
     txFEE_BUMP_INNER_FAILED = -13, // fee bump inner transaction failed

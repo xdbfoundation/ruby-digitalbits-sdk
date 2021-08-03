@@ -14,11 +14,12 @@ require 'xdr'
 #       {
 #           AccountID accountID;
 #           SignerKey signerKey;
-#       } signer;
+#       }
+#       signer;
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class RevokeSponsorshipOp < XDR::Union
     include XDR::Namespace
 

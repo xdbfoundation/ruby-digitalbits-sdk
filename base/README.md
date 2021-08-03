@@ -31,19 +31,19 @@ It seems as though jruby is particularly slow when it comes to BigDecimal math; 
 
 In addition to the code generated from the XDR definition files, this library also provides some digitalbits specific features.  Let's look at some of them.
 
-We wrap rbnacl with `DigitalBits::KeyPair`, providing some digitalbits specific functionality as seen below:
+We wrap rbnacl with `Digitalbits::KeyPair`, providing some digitalbits specific functionality as seen below:
 
 ```ruby
 
 # Create a keypair from a digitalbits secret seed
-signer = DigitalBits::KeyPair.from_seed("SCBASSEX34FJNIPLUYQPSMZHHYXXQNWOOV42XYZFXM6EGYX2DPIZVIA3")
+signer = Digitalbits::KeyPair.from_seed("SCBASSEX34FJNIPLUYQPSMZHHYXXQNWOOV42XYZFXM6EGYX2DPIZVIA3")
 
 # Create a keypair from a digitalbits address
-verifier = DigitalBits::KeyPair.from_address("GBQWWBFLRP3BXD2RI2FH7XNNU2MKIYVUI7QXUAIVG34JY6MQGXVUO3RX")
+verifier = Digitalbits::KeyPair.from_address("GBQWWBFLRP3BXD2RI2FH7XNNU2MKIYVUI7QXUAIVG34JY6MQGXVUO3RX")
 
 # Produce a digitalbits compliant "decorated signature" that is compliant with digitalbits transactions
 
-signer.sign_decorated("Hello world!") # => #<DigitalBits::DecoratedSignature ...>
+signer.sign_decorated("Hello world!") # => #<Digitalbits::DecoratedSignature ...>
 
 ```
 
@@ -51,15 +51,15 @@ This library also provides an impementation of DigitalBits's "StrKey" encoding (
 
 ```ruby
 
-DigitalBits::Util::StrKey.check_encode(:account_id, "\xFF\xFF\xFF\xFF\xFF\xFF\xFF") # => "GD777777777764TU"
-DigitalBits::Util::StrKey.check_encode(:seed, "\x00\x00\x00\x00\x00\x00\x39") # => "SAAAAAAAAAADST3H"
+Digitalbits::Util::StrKey.check_encode(:account_id, "\xFF\xFF\xFF\xFF\xFF\xFF\xFF") # => "GD777777777764TU"
+Digitalbits::Util::StrKey.check_encode(:seed, "\x00\x00\x00\x00\x00\x00\x39") # => "SAAAAAAAAAADST3H"
 
 # To prevent interpretation mistakes, you must pass the expected version byte
 # when decoding a check_encoded value
 
-encoded = DigitalBits::Util::StrCheck.check_encode(:account_id, "\x61\x6b\x04\xab\x8b\xf6\x1b")
-DigitalBits::Util::StrKey.check_decode(:account_id, encoded) # => "\x61\x6b\x04\xab\x8b\xf6\x1b"
-DigitalBits::Util::StrKey.check_decode(:seed, encoded) # => throws ArgumentError: Unexpected version: :account_id
+encoded = Digitalbits::Util::StrCheck.check_encode(:account_id, "\x61\x6b\x04\xab\x8b\xf6\x1b")
+Digitalbits::Util::StrKey.check_decode(:account_id, encoded) # => "\x61\x6b\x04\xab\x8b\xf6\x1b"
+Digitalbits::Util::StrKey.check_decode(:seed, encoded) # => throws ArgumentError: Unexpected version: :account_id
 
 ```
 
