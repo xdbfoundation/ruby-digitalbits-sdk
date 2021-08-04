@@ -2,8 +2,8 @@ require "digitalbits-sdk"
 
 # Reference random account
 account = Digitalbits::Account.random()
-puts account.keypair.seed
-puts account.keypair.address
+puts "Secret seed: " + account.keypair.seed
+puts "AccountID: " + account.keypair.address
 
 
 # Further options
