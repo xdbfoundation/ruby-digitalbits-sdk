@@ -10,7 +10,7 @@ Install libraries:
 
 Fund account on the testnet:
 
-        ruby sdk/ruby sdk/examples/01_get_funded.rb 
+        ruby sdk/examples/01_get_funded.rb 
 
 Output should be like following:
 
