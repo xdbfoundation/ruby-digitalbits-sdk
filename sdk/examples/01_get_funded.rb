@@ -1,13 +1,14 @@
 require "digitalbits-sdk"
 
-# Reference an account from a secret seed
-account = Digitalbits::Account.from_seed("SBXH4SEH32PENMMB66P4TY6LXUIFMRVFUMX2LJC3P2STHICBJLNQJOH5")
+# Reference random account
+account = Digitalbits::Account.random()
+puts account.keypair.seed
+puts account.keypair.address
+
 
 # Further options
 #
 # Make a random account
-#
-#   account = Digitalbits::Account.random()
 #
 # Reference an account (unauthenticated) from an address
 #
@@ -34,4 +35,5 @@ client = Digitalbits::Client.default_testnet
 
 # Get our friendly friendbot to
 # fund your new account
-client.friendbot(account) # => #<OK>
+response = client.friendbot(account) # => #<OK>
+puts response.body
