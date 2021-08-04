@@ -33,9 +33,9 @@ envelope = tx.to_envelope(from).to_xdr(:base64)
 puts "Submitting transaction to frontier..."
 # submit the transaction
 begin
-  client.frontier.transactions._post(tx: envelope)
+  result = client.frontier.transactions._post(tx: envelope)
 rescue => e
   p e
 else
-  puts "Success!"
+  puts result._response.body
 end
