@@ -5,7 +5,7 @@ This code generates random keypair and funds it on the testnet with friendbot.
 
 Run this code example:
 
-    ruby 01_get_funded
+    ruby 01_get_funded.rb
 
 
 Output: 
