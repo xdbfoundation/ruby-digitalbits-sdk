@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class CreateClaimableBalanceOp < XDR::Struct
     attribute :asset,     Asset
     attribute :amount,    Int64

@@ -16,7 +16,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ClaimPredicateType < XDR::Enum
     member :claim_predicate_unconditional,        0
     member :claim_predicate_and,                  1

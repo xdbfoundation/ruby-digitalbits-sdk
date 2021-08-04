@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   class TransactionEnvelope
     delegate :tx, :signatures, to: :value
     delegate :hash, to: :tx
@@ -9,7 +9,7 @@ module DigitalBits
     # NOTE: this does not do any authorization checks, which requires access to
     # the current ledger state.
     #
-    # @param key_pairs [Array<DigitalBits::KeyPair>] The key pairs to check the envelopes signatures against
+    # @param key_pairs [Array<Digitalbits::KeyPair>] The key pairs to check the envelopes signatures against
     #
     # @return [Boolean] true if all signatures are from the provided key_pairs and validly sign the tx's hash
     def signed_correctly?(*key_pairs)

@@ -8,7 +8,7 @@ require 'xdr'
 #   enum PaymentResultCode
 #   {
 #       // codes considered as "success" for the operation
-#       PAYMENT_SUCCESS = 0, // payment successfully completed
+#       PAYMENT_SUCCESS = 0, // payment successfuly completed
 #   
 #       // codes considered as "failure" for the operation
 #       PAYMENT_MALFORMED = -1,          // bad input
@@ -23,7 +23,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class PaymentResultCode < XDR::Enum
     member :payment_success,            0
     member :payment_malformed,          -1

@@ -14,18 +14,18 @@ require "digest/sha2"
 master = RbNaCl::SigningKey.new("allmylifemyhearthasbeensearching")
 destination = RbNaCl::SigningKey.new("allmylifemyhearthasbeensearching")
 
-tx = DigitalBits::Transaction.new
+tx = Digitalbits::Transaction.new
 tx.account = master.verify_key.to_bytes
 tx.fee = 1000
 tx.seq_num = 1
 
-payment = DigitalBits::PaymentOp.new
+payment = Digitalbits::PaymentOp.new
 payment.destination = destination.verify_key.to_bytes
-payment.asset = DigitalBits::Asset.new(:native)
-payment.amount = 200 * DigitalBits::ONE
+payment.asset = Digitalbits::Asset.new(:native)
+payment.amount = 200 * Digitalbits::ONE
 
-op = DigitalBits::Operation.new
-op.body = DigitalBits::Operation::Body.new(:payment, payment)
+op = Digitalbits::Operation.new
+op.body = Digitalbits::Operation::Body.new(:payment, payment)
 
 tx.operations = [op]
 
@@ -33,9 +33,9 @@ raw = tx.to_xdr
 tx_hash = Digest::SHA256.digest raw
 signature = master.sign(tx_hash)
 
-env = DigitalBits::TransactionEnvelope.new
+env = Digitalbits::TransactionEnvelope.new
 env.tx = tx
-env.signatures = [DigitalBits::DecoratedSignature.new({
+env.signatures = [Digitalbits::DecoratedSignature.new({
   hint: master.verify_key.to_bytes[0...4],
   signature: signature
 })]

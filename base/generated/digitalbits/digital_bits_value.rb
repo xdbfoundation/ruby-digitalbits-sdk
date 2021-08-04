@@ -29,7 +29,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class DigitalBitsValue < XDR::Struct
     include XDR::Namespace
 

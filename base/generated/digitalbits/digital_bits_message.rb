@@ -46,7 +46,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class DigitalBitsMessage < XDR::Union
     switch_on MessageType, :type
 

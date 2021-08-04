@@ -1,4 +1,4 @@
-RSpec.describe DigitalBits::Account do
+RSpec.describe Digitalbits::Account do
   describe ".random" do
     it "generates a DigitalBits account with a random keypair" do
       account = described_class.random
@@ -35,18 +35,18 @@ RSpec.describe DigitalBits::Account do
     end
 
     it "should handle 404 request when performing federation lookup", vcr: {record: :once, match_requests_on: [:method]} do
-      expect { described_class.lookup("jane@email.com*digitalbits.io") }.to raise_error(DigitalBits::AccountNotFound)
+      expect { described_class.lookup("jane@email.com*digitalbits.io") }.to raise_error(Digitalbits::AccountNotFound)
     end
 
     it "should handle domains that are not federation servers", vcr: {record: :once, match_requests_on: [:method]} do
-      expect { described_class.lookup("john*digitalbits.io") }.to raise_error(DigitalBits::InvalidDigitalBitsDomain)
+      expect { described_class.lookup("john*digitalbits.io") }.to raise_error(Digitalbits::InvalidDigitalBitsDomain)
     end
   end
 
   describe "#keypair" do
     it "generates a DigitalBits account with a random keypair" do
       account = described_class.random
-      expect(account.keypair).to be_a DigitalBits::KeyPair
+      expect(account.keypair).to be_a Digitalbits::KeyPair
     end
   end
 end

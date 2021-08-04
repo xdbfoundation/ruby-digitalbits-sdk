@@ -1,5 +1,5 @@
-RSpec.describe DigitalBits::Convert do
-  subject { DigitalBits::Convert }
+RSpec.describe Digitalbits::Convert do
+  subject { Digitalbits::Convert }
   let(:raw) { "\x01\x02\x03\x04" }
   let(:hex) { "01020304" }
   let(:base64) { "AQIDBA==" }
@@ -46,10 +46,10 @@ RSpec.describe DigitalBits::Convert do
 
   describe "#pk_to_address" do
     let(:pk_raw) { "\x00" * 32 }
-    let(:pk_account_id) { DigitalBits::AccountID.new(:public_key_type_ed25519, pk_raw) }
+    let(:pk_account_id) { Digitalbits::AccountID.new(:public_key_type_ed25519, pk_raw) }
 
-    it "converts a DigitalBits::AccountID into an address using StrKey.check_encode(:account_id)" do
-      address = DigitalBits::Util::StrKey.check_encode(:account_id, pk_raw)
+    it "converts a Digitalbits::AccountID into an address using StrKey.check_encode(:account_id)" do
+      address = Digitalbits::Util::StrKey.check_encode(:account_id, pk_raw)
       expect(subject.pk_to_address(pk_account_id)).to eql(address)
     end
   end

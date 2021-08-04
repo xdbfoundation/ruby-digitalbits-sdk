@@ -1,6 +1,6 @@
-module DigitalBits
+module Digitalbits
   class FeeBumpTransaction
-    include DigitalBits::Concerns::Transaction
+    include Digitalbits::Concerns::Transaction
 
     def to_envelope(*key_pairs)
       signatures = (key_pairs || []).map(&method(:sign_decorated))
@@ -9,9 +9,9 @@ module DigitalBits
     end
 
     def signature_base_prefix
-      val = DigitalBits::EnvelopeType.envelope_type_tx_fee_bump
+      val = Digitalbits::EnvelopeType.envelope_type_tx_fee_bump
 
-      DigitalBits.current_network_id + DigitalBits::EnvelopeType.to_xdr(val)
+      Digitalbits.current_network_id + Digitalbits::EnvelopeType.to_xdr(val)
     end
 
     def source_account

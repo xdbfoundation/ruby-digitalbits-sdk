@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class CreateAccountResult < XDR::Union
     switch_on CreateAccountResultCode, :code
 

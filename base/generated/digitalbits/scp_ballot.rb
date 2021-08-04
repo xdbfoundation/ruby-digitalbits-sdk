@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SCPBallot < XDR::Struct
     attribute :counter, Uint32
     attribute :value,   Value

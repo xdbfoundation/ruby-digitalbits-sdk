@@ -5,8 +5,7 @@ require 'xdr'
 
 # === xdr source ============================================================
 #
-#   union EndSponsoringFutureReservesResult switch (
-#       EndSponsoringFutureReservesResultCode code)
+#   union EndSponsoringFutureReservesResult switch (EndSponsoringFutureReservesResultCode code)
 #   {
 #   case END_SPONSORING_FUTURE_RESERVES_SUCCESS:
 #       void;
@@ -15,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class EndSponsoringFutureReservesResult < XDR::Union
     switch_on EndSponsoringFutureReservesResultCode, :code
 

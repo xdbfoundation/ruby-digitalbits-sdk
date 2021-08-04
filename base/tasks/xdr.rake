@@ -23,7 +23,7 @@ namespace :xdr do
       namespace: "digitalbits-base-generated",
       language: :ruby
     )
-    IO.write("DigitalBits.x", compilation.source)
+    IO.write("Digitalbits.x", compilation.source)
     compilation.compile
   end
 

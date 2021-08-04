@@ -20,7 +20,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class AccountEntryExtensionV1 < XDR::Struct
     include XDR::Namespace
 

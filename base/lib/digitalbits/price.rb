@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   # reopen class
   class Price
     MAX_PRECISION = (2**31) - 1
@@ -33,7 +33,7 @@ module DigitalBits
     end
 
     def inspect
-      "#<DigitalBits::Price #{self}>"
+      "#<Digitalbits::Price #{self}>"
     end
   end
 end

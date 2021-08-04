@@ -1,12 +1,12 @@
 require "digitalbits-sdk"
 
-client = DigitalBits::Client.default_testnet
+client = Digitalbits::Client.default_testnet
 
 puts "Creating random sender..."
-from = DigitalBits::KeyPair.random
+from = Digitalbits::KeyPair.random
 client.friendbot(from)
 puts "Creating random recipient..."
-recipient = DigitalBits::KeyPair.random
+recipient = Digitalbits::KeyPair.random
 client.friendbot(recipient)
 
 puts "Retrieving account's current sequence number..."
@@ -14,13 +14,13 @@ seq_num = client.account_info(from.address).sequence.to_i
 
 puts "Constructing transaction..."
 # construct TransactionBuilder and payment Operation
-builder = DigitalBits::TransactionBuilder.new(
+builder = Digitalbits::TransactionBuilder.new(
   source_account: from,
   sequence_number: seq_num + 1
 )
 # Note: if you want to send a non-native asset, :amount must take the form:
 # [<:alphanum12 or :alphanum4>, <code>, <issuer keypair>, <amount>]
-payment_op = DigitalBits::Operation.payment({
+payment_op = Digitalbits::Operation.payment({
   destination: recipient,
   amount: [:native, 100]
 })

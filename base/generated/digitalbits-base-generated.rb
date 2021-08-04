@@ -3,7 +3,7 @@
 
 require 'xdr'
 
-module DigitalBits
+module Digitalbits
   include XDR::Namespace
 
   Hash = XDR::Opaque[32]
@@ -25,7 +25,7 @@ module DigitalBits
   autoload :HmacSha256Key
   autoload :HmacSha256Mac
 end
-module DigitalBits
+module Digitalbits
   include XDR::Namespace
 
   AccountID = PublicKey
@@ -38,7 +38,6 @@ module DigitalBits
   AssetCode4 = XDR::Opaque[4]
   AssetCode12 = XDR::Opaque[12]
   autoload :AssetType
-  autoload :AssetCode
   autoload :Asset
   autoload :Price
   autoload :Liabilities
@@ -47,7 +46,6 @@ module DigitalBits
   autoload :Signer
   autoload :AccountFlags
   MASK_ACCOUNT_FLAGS = 0x7
-  MASK_ACCOUNT_FLAGS_V17 = 0xF
   MAX_SIGNERS = 20
   SponsorshipDescriptor = XDR::Option[AccountID]
   autoload :AccountEntryExtensionV2
@@ -56,7 +54,6 @@ module DigitalBits
   autoload :TrustLineFlags
   MASK_TRUSTLINE_FLAGS = 1
   MASK_TRUSTLINE_FLAGS_V13 = 3
-  MASK_TRUSTLINE_FLAGS_V17 = 7
   autoload :TrustLineEntry
   autoload :OfferEntryFlags
   MASK_OFFERENTRY_FLAGS = 1
@@ -68,16 +65,13 @@ module DigitalBits
   autoload :Claimant
   autoload :ClaimableBalanceIDType
   autoload :ClaimableBalanceID
-  autoload :ClaimableBalanceFlags
-  MASK_CLAIMABLE_BALANCE_FLAGS = 0x1
-  autoload :ClaimableBalanceEntryExtensionV1
   autoload :ClaimableBalanceEntry
   autoload :LedgerEntryExtensionV1
   autoload :LedgerEntry
   autoload :LedgerKey
   autoload :EnvelopeType
 end
-module DigitalBits
+module Digitalbits
   include XDR::Namespace
 
   autoload :MuxedAccount
@@ -100,9 +94,6 @@ module DigitalBits
   autoload :BeginSponsoringFutureReservesOp
   autoload :RevokeSponsorshipType
   autoload :RevokeSponsorshipOp
-  autoload :ClawbackOp
-  autoload :ClawbackClaimableBalanceOp
-  autoload :SetTrustLineFlagsOp
   autoload :Operation
   autoload :OperationID
   autoload :MemoType
@@ -158,12 +149,6 @@ module DigitalBits
   autoload :EndSponsoringFutureReservesResult
   autoload :RevokeSponsorshipResultCode
   autoload :RevokeSponsorshipResult
-  autoload :ClawbackResultCode
-  autoload :ClawbackResult
-  autoload :ClawbackClaimableBalanceResultCode
-  autoload :ClawbackClaimableBalanceResult
-  autoload :SetTrustLineFlagsResultCode
-  autoload :SetTrustLineFlagsResult
   autoload :OperationResultCode
   autoload :OperationResult
   autoload :TransactionResultCode
@@ -171,7 +156,7 @@ module DigitalBits
   autoload :InnerTransactionResultPair
   autoload :TransactionResult
 end
-module DigitalBits
+module Digitalbits
   include XDR::Namespace
 
   UpgradeType = XDR::VarOpaque[128]
@@ -205,7 +190,7 @@ module DigitalBits
   autoload :LedgerCloseMetaV0
   autoload :LedgerCloseMeta
 end
-module DigitalBits
+module Digitalbits
   include XDR::Namespace
 
   autoload :ErrorCode
@@ -230,7 +215,7 @@ module DigitalBits
   autoload :DigitalBitsMessage
   autoload :AuthenticatedMessage
 end
-module DigitalBits
+module Digitalbits
   include XDR::Namespace
 
   Value = XDR::VarOpaque[]

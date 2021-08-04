@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class BeginSponsoringFutureReservesOp < XDR::Struct
     attribute :sponsored_id, AccountID
   end

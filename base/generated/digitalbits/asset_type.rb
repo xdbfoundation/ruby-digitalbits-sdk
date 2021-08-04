@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class AssetType < XDR::Enum
     member :asset_type_native,            0
     member :asset_type_credit_alphanum4,  1

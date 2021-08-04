@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class PathPaymentStrictReceiveResult
     class Success < XDR::Struct
       attribute :offers, XDR::VarArray[ClaimOfferAtom]

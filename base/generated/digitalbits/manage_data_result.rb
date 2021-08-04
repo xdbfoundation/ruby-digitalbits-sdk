@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ManageDataResult < XDR::Union
     switch_on ManageDataResultCode, :code
 

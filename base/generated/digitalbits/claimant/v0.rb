@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Claimant
     class V0 < XDR::Struct
       attribute :destination, AccountID

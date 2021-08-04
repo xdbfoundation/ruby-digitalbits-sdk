@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class IPAddrType < XDR::Enum
     member :i_pv4, 0
     member :i_pv6, 1

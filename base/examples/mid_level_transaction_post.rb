@@ -17,10 +17,10 @@ server = Faraday.new(url: "http://localhost:39132") { |conn|
   conn.adapter Faraday.default_adapter
 }
 
-master = DigitalBits::KeyPair.from_raw_seed("allmylifemyhearthasbeensearching")
-destination = DigitalBits::KeyPair.from_raw_seed("allmylifemyhearthasbeensearching")
+master = Digitalbits::KeyPair.from_raw_seed("allmylifemyhearthasbeensearching")
+destination = Digitalbits::KeyPair.from_raw_seed("allmylifemyhearthasbeensearching")
 
-tx = DigitalBits::TransactionBuilder.payment({
+tx = Digitalbits::TransactionBuilder.payment({
   source_account: master,
   destination: destination,
   sequence_number: 1,

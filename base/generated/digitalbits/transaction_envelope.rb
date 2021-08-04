@@ -16,7 +16,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionEnvelope < XDR::Union
     switch_on EnvelopeType, :type
 

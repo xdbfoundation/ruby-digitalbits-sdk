@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SCPEnvelope < XDR::Struct
     attribute :statement, SCPStatement
     attribute :signature, Signature

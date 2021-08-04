@@ -3,22 +3,22 @@ require "uri"
 require "faraday"
 require "json"
 
-module DigitalBits
+module Digitalbits
   class Account
     delegate :address, to: :keypair
 
     def self.random
-      keypair = DigitalBits::KeyPair.random
+      keypair = Digitalbits::KeyPair.random
       new(keypair)
     end
 
     def self.from_seed(seed)
-      keypair = DigitalBits::KeyPair.from_seed(seed)
+      keypair = Digitalbits::KeyPair.from_seed(seed)
       new(keypair)
     end
 
     def self.from_address(address)
-      keypair = DigitalBits::KeyPair.from_address(address)
+      keypair = Digitalbits::KeyPair.from_address(address)
       new(keypair)
     end
 
@@ -56,13 +56,13 @@ module DigitalBits
     end
 
     def self.master
-      keypair = DigitalBits::KeyPair.from_raw_seed("allmylifemyhearthasbeensearching")
+      keypair = Digitalbits::KeyPair.from_raw_seed("allmylifemyhearthasbeensearching")
       new(keypair)
     end
 
     attr_reader :keypair
 
-    # @param [DigitalBits::KeyPair] keypair
+    # @param [Digitalbits::KeyPair] keypair
     def initialize(keypair)
       @keypair = keypair
     end

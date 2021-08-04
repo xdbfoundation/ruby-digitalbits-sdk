@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class CreateAccountOp < XDR::Struct
     attribute :destination,      AccountID
     attribute :starting_balance, Int64

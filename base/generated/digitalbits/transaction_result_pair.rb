@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionResultPair < XDR::Struct
     attribute :transaction_hash, Hash
     attribute :result,           TransactionResult

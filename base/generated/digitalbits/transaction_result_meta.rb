@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionResultMeta < XDR::Struct
     attribute :result,              TransactionResultPair
     attribute :fee_processing,      LedgerEntryChanges

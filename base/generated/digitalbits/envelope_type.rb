@@ -17,7 +17,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class EnvelopeType < XDR::Enum
     member :envelope_type_tx_v0,       0
     member :envelope_type_scp,         1

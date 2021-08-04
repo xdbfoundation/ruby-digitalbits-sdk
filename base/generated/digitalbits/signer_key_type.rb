@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SignerKeyType < XDR::Enum
     member :signer_key_type_ed25519,     0
     member :signer_key_type_pre_auth_tx, 1

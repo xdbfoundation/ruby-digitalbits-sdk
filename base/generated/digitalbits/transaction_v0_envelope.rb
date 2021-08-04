@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionV0Envelope < XDR::Struct
     attribute :tx,         TransactionV0
     attribute :signatures, XDR::VarArray[DecoratedSignature, 20]

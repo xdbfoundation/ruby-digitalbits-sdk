@@ -12,7 +12,7 @@ require 'xdr'
 #               }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TrustLineEntry
     class Ext
       class V1

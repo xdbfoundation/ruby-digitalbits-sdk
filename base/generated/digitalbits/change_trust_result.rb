@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ChangeTrustResult < XDR::Union
     switch_on ChangeTrustResultCode, :code
 

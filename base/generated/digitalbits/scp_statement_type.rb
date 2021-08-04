@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SCPStatementType < XDR::Enum
     member :scp_st_prepare,     0
     member :scp_st_confirm,     1

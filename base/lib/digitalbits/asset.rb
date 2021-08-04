@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   class Asset
     TYPES = %i[native alphanum4 alphanum12]
 
@@ -9,7 +9,7 @@ module DigitalBits
     # @param code   [String] asset code
     # @param issuer [#to_keypair] asset issuer
     #
-    # @return [DigitalBits::Asset::AlphaNum4] asset4 representation
+    # @return [Digitalbits::Asset::AlphaNum4] asset4 representation
     def self.alphanum4(code, issuer)
       issuer = issuer.to_keypair if issuer.respond_to?(:to_keypair)
       raise ArgumentError, "Bad :issuer" unless issuer.is_a?(KeyPair)
@@ -21,7 +21,7 @@ module DigitalBits
     # @param code   [String] asset code
     # @param issuer [#to_keypair] asset issuer
     #
-    # @return [DigitalBits::Asset::AlphaNum4] asset4 representation
+    # @return [Digitalbits::Asset::AlphaNum4] asset4 representation
     def self.alphanum12(code, issuer)
       issuer = issuer.to_keypair if issuer.respond_to?(:to_keypair)
       raise ArgumentError, "Bad :issuer" unless issuer.is_a?(KeyPair)
@@ -36,18 +36,18 @@ module DigitalBits
         "native"
       when AssetType.asset_type_credit_alphanum4
         anum = alpha_num4!
-        issuer_address = DigitalBits::Convert.pk_to_address(anum.issuer)
+        issuer_address = Digitalbits::Convert.pk_to_address(anum.issuer)
         "#{anum.asset_code}/#{issuer_address}"
       when AssetType.asset_type_credit_alphanum12
         anum = alpha_num12!
-        issuer_address = DigitalBits::Convert.pk_to_address(anum.issuer)
+        issuer_address = Digitalbits::Convert.pk_to_address(anum.issuer)
         "#{anum.asset_code}/#{issuer_address}"
       end
     end
 
     def inspect
       # label = switch.to_s
-      "#<DigitalBits::Asset #{self}>"
+      "#<Digitalbits::Asset #{self}>"
     end
 
     def code

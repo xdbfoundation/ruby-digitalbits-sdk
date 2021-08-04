@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   class TransactionBuilder
     attr_reader :source_account, :sequence_number, :base_fee, :time_bounds, :memo, :operations
 
@@ -9,17 +9,17 @@ module DigitalBits
       # It reduces the boilerplate, when you just need to
       # shoot a single operation in transaction
       def method_missing(method_name, *args, **kwargs)
-        unless DigitalBits::Operation.respond_to?(method_name)
+        unless Digitalbits::Operation.respond_to?(method_name)
           return super
         end
 
-        op = DigitalBits::Operation.send(method_name, **kwargs)
+        op = Digitalbits::Operation.send(method_name, **kwargs)
 
         new(**kwargs).add_operation(op).build
       end
 
       def respond_to_missing?(method_name, include_private = false)
-        DigitalBits::Operation.respond_to?(method_name) || super
+        Digitalbits::Operation.respond_to?(method_name) || super
       end
     end
 
@@ -31,9 +31,9 @@ module DigitalBits
       memo: nil,
       **_ # ignore any additional parameters without errors
     )
-      raise ArgumentError, "Bad :source_account" unless source_account.is_a?(DigitalBits::KeyPair)
+      raise ArgumentError, "Bad :source_account" unless source_account.is_a?(Digitalbits::KeyPair)
       raise ArgumentError, "Bad :sequence_number" unless sequence_number.is_a?(Integer) && sequence_number >= 0
-      raise ArgumentError, "Bad :time_bounds" unless time_bounds.is_a?(DigitalBits::TimeBounds) || time_bounds.nil?
+      raise ArgumentError, "Bad :time_bounds" unless time_bounds.is_a?(Digitalbits::TimeBounds) || time_bounds.nil?
       raise ArgumentError, "Bad :base_fee" unless base_fee.is_a?(Integer) && base_fee >= 100
 
       @source_account = source_account
@@ -65,18 +65,18 @@ module DigitalBits
         time_bounds: @time_bounds,
         memo: @memo,
         operations: @operations,
-        ext: DigitalBits::Transaction::Ext.new(0)
+        ext: Digitalbits::Transaction::Ext.new(0)
       }
 
       @sequence_number += 1
 
-      DigitalBits::Transaction.new(attrs)
+      Digitalbits::Transaction.new(attrs)
     end
 
     def build_fee_bump(inner_txe:)
-      if inner_txe.switch == DigitalBits::EnvelopeType.envelope_type_tx_v0
-        inner_txe = DigitalBits::TransactionEnvelope.v1(tx: inner_txe.tx.to_v1, signatures: inner_txe.signatures)
-      elsif inner_txe.switch != DigitalBits::EnvelopeType.envelope_type_tx
+      if inner_txe.switch == Digitalbits::EnvelopeType.envelope_type_tx_v0
+        inner_txe = Digitalbits::TransactionEnvelope.v1(tx: inner_txe.tx.to_v1, signatures: inner_txe.signatures)
+      elsif inner_txe.switch != Digitalbits::EnvelopeType.envelope_type_tx
         raise ArgumentError, "Invalid inner transaction type #{inner_txe.switch}"
       end
 
@@ -89,16 +89,16 @@ module DigitalBits
         raise "Insufficient base_fee, it should be at least #{inner_base_fee_rate} stroops."
       end
 
-      DigitalBits::FeeBumpTransaction.new(
+      Digitalbits::FeeBumpTransaction.new(
         fee_source: @source_account.muxed_account,
         fee: @base_fee * (inner_ops.length + 1),
-        inner_tx: DigitalBits::FeeBumpTransaction::InnerTx.new(:envelope_type_tx, inner_txe.v1!),
-        ext: DigitalBits::FeeBumpTransaction::Ext.new(0)
+        inner_tx: Digitalbits::FeeBumpTransaction::InnerTx.new(:envelope_type_tx, inner_txe.v1!),
+        ext: Digitalbits::FeeBumpTransaction::Ext.new(0)
       )
     end
 
     def add_operation(operation)
-      raise ArgumentError, "Bad operation" unless operation.is_a? DigitalBits::Operation
+      raise ArgumentError, "Bad operation" unless operation.is_a? Digitalbits::Operation
       @operations.push(operation)
       self
     end
@@ -109,7 +109,7 @@ module DigitalBits
     end
 
     def set_source_account(account_kp)
-      raise ArgumentError, "Bad source account" unless account_kp.is_a?(DigitalBits::KeyPair)
+      raise ArgumentError, "Bad source account" unless account_kp.is_a?(Digitalbits::KeyPair)
       @source_account = account_kp
       self
     end
@@ -126,7 +126,7 @@ module DigitalBits
       end
 
       if @time_bounds.nil?
-        @time_bounds = DigitalBits::TimeBounds.new(min_time: 0, max_time: nil)
+        @time_bounds = Digitalbits::TimeBounds.new(min_time: 0, max_time: nil)
       end
 
       @time_bounds.max_time = timeout == 0 ? timeout : Time.now.to_i + timeout
@@ -147,7 +147,7 @@ module DigitalBits
 
     def make_memo(memo)
       case memo
-      when DigitalBits::Memo
+      when Digitalbits::Memo
         memo
       when nil
         Memo.new(:memo_none)

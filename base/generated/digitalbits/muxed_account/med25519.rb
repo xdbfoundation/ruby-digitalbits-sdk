@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class MuxedAccount
     class Med25519 < XDR::Struct
       attribute :id,      Uint64

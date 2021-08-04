@@ -17,7 +17,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ManageSellOfferOp < XDR::Struct
     attribute :selling,  Asset
     attribute :buying,   Asset

@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class TransactionResultSet < XDR::Struct
     attribute :results, XDR::VarArray[TransactionResultPair]
   end

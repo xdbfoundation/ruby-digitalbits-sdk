@@ -1,4 +1,4 @@
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -82,7 +82,7 @@ struct HmacSha256Mac
 };
 }
 
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -110,17 +110,6 @@ enum AssetType
     ASSET_TYPE_NATIVE = 0,
     ASSET_TYPE_CREDIT_ALPHANUM4 = 1,
     ASSET_TYPE_CREDIT_ALPHANUM12 = 2
-};
-
-union AssetCode switch (AssetType type)
-{
-case ASSET_TYPE_CREDIT_ALPHANUM4:
-    AssetCode4 assetCode4;
-
-case ASSET_TYPE_CREDIT_ALPHANUM12:
-    AssetCode12 assetCode12;
-
-    // add other asset types here in the future
 };
 
 union Asset switch (AssetType type)
@@ -194,16 +183,11 @@ enum AccountFlags
     // otherwise, authorization cannot be revoked
     AUTH_REVOCABLE_FLAG = 0x2,
     // Once set, causes all AUTH_* flags to be read-only
-    AUTH_IMMUTABLE_FLAG = 0x4,
-    // Trustlines are created with clawback enabled set to "true",
-    // and claimable balances created from those trustlines are created
-    // with clawback enabled set to "true"
-    AUTH_CLAWBACK_ENABLED_FLAG = 0x8
+    AUTH_IMMUTABLE_FLAG = 0x4
 };
 
 // mask for all valid flags
 const MASK_ACCOUNT_FLAGS = 0x7;
-const MASK_ACCOUNT_FLAGS_V17 = 0xF;
 
 // maximum number of signers
 const MAX_SIGNERS = 20;
@@ -240,7 +224,7 @@ struct AccountEntryExtensionV1
 
 /* AccountEntry
 
-    Main entry representing a user in DigitalBits. All transactions are
+    Main entry representing a user in Digitalbits. All transactions are
     performed using an account.
 
     Other ledger entries created require an account.
@@ -249,7 +233,7 @@ struct AccountEntryExtensionV1
 struct AccountEntry
 {
     AccountID accountID;      // master public key for this account
-    int64 balance;            // in stroops
+    int64 balance;            // in nibbs
     SequenceNumber seqNum;    // last sequence number used for this account
     uint32 numSubEntries;     // number of sub-entries this account has
                               // drives the reserve
@@ -287,16 +271,12 @@ enum TrustLineFlags
     AUTHORIZED_FLAG = 1,
     // issuer has authorized account to maintain and reduce liabilities for its
     // credit
-    AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG = 2,
-    // issuer has specified that it may clawback its credit, and that claimable
-    // balances created with its credit may also be clawed back
-    TRUSTLINE_CLAWBACK_ENABLED_FLAG = 4
+    AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG = 2
 };
 
 // mask for all trustline flags
 const MASK_TRUSTLINE_FLAGS = 1;
 const MASK_TRUSTLINE_FLAGS_V13 = 3;
-const MASK_TRUSTLINE_FLAGS_V17 = 7;
 
 struct TrustLineEntry
 {
@@ -441,27 +421,6 @@ case CLAIMABLE_BALANCE_ID_TYPE_V0:
     Hash v0;
 };
 
-enum ClaimableBalanceFlags
-{
-    // If set, the issuer account of the asset held by the claimable balance may
-    // clawback the claimable balance
-    CLAIMABLE_BALANCE_CLAWBACK_ENABLED_FLAG = 0x1
-};
-
-const MASK_CLAIMABLE_BALANCE_FLAGS = 0x1;
-
-struct ClaimableBalanceEntryExtensionV1
-{
-    union switch (int v)
-    {
-    case 0:
-        void;
-    }
-    ext;
-
-    uint32 flags; // see ClaimableBalanceFlags
-};
-
 struct ClaimableBalanceEntry
 {
     // Unique identifier for this ClaimableBalanceEntry
@@ -481,8 +440,6 @@ struct ClaimableBalanceEntry
     {
     case 0:
         void;
-    case 1:
-        ClaimableBalanceEntryExtensionV1 v1;
     }
     ext;
 };
@@ -580,7 +537,7 @@ enum EnvelopeType
 };
 }
 
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -628,10 +585,7 @@ enum OperationType
     CLAIM_CLAIMABLE_BALANCE = 15,
     BEGIN_SPONSORING_FUTURE_RESERVES = 16,
     END_SPONSORING_FUTURE_RESERVES = 17,
-    REVOKE_SPONSORSHIP = 18,
-    CLAWBACK = 19,
-    CLAWBACK_CLAIMABLE_BALANCE = 20,
-    SET_TRUST_LINE_FLAGS = 21
+    REVOKE_SPONSORSHIP = 18
 };
 
 /* CreateAccount
@@ -761,7 +715,7 @@ struct CreatePassiveSellOfferOp
 {
     Asset selling; // A
     Asset buying;  // B
-    int64 amount;  // amount taker gets
+    int64 amount;  // amount taker gets. if set to 0, delete the offer
     Price price;   // cost of A in terms of B
 };
 
@@ -821,9 +775,20 @@ struct ChangeTrustOp
 struct AllowTrustOp
 {
     AccountID trustor;
-    AssetCode asset;
+    union switch (AssetType type)
+    {
+    // ASSET_TYPE_NATIVE is not allowed
+    case ASSET_TYPE_CREDIT_ALPHANUM4:
+        AssetCode4 assetCode4;
 
-    // One of 0, AUTHORIZED_FLAG, or AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG
+    case ASSET_TYPE_CREDIT_ALPHANUM12:
+        AssetCode12 assetCode12;
+
+        // add other asset types here in the future
+    }
+    asset;
+
+    // 0, or any bitwise combination of TrustLineFlags
     uint32 authorize;
 };
 
@@ -946,49 +911,8 @@ case REVOKE_SPONSORSHIP_SIGNER:
     {
         AccountID accountID;
         SignerKey signerKey;
-    } signer;
-};
-
-/* Claws back an amount of an asset from an account
-
-    Threshold: med
-
-    Result: ClawbackResult
-*/
-struct ClawbackOp
-{
-    Asset asset;
-    MuxedAccount from;
-    int64 amount;
-};
-
-/* Claws back a claimable balance
-
-    Threshold: med
-
-    Result: ClawbackClaimableBalanceResult
-*/
-struct ClawbackClaimableBalanceOp
-{
-    ClaimableBalanceID balanceID;
-};
-
-/* SetTrustLineFlagsOp
-
-   Updates the flags of an existing trust line.
-   This is called by the issuer of the related asset.
-
-   Threshold: low
-
-   Result: SetTrustLineFlagsResult
-*/
-struct SetTrustLineFlagsOp
-{
-    AccountID trustor;
-    Asset asset;
-
-    uint32 clearFlags; // which flags to clear
-    uint32 setFlags;   // which flags to set
+    }
+    signer;
 };
 
 /* An operation is the lowest unit of work that a transaction does */
@@ -1039,12 +963,6 @@ struct Operation
         void;
     case REVOKE_SPONSORSHIP:
         RevokeSponsorshipOp revokeSponsorshipOp;
-    case CLAWBACK:
-        ClawbackOp clawbackOp;
-    case CLAWBACK_CLAIMABLE_BALANCE:
-        ClawbackClaimableBalanceOp clawbackClaimableBalanceOp;
-    case SET_TRUST_LINE_FLAGS:
-        SetTrustLineFlagsOp setTrustLineFlagsOp;
     }
     body;
 };
@@ -1261,7 +1179,7 @@ default:
 enum PaymentResultCode
 {
     // codes considered as "success" for the operation
-    PAYMENT_SUCCESS = 0, // payment successfully completed
+    PAYMENT_SUCCESS = 0, // payment successfuly completed
 
     // codes considered as "failure" for the operation
     PAYMENT_MALFORMED = -1,          // bad input
@@ -1489,9 +1407,7 @@ enum SetOptionsResultCode
     SET_OPTIONS_UNKNOWN_FLAG = -6,           // can't set an unknown flag
     SET_OPTIONS_THRESHOLD_OUT_OF_RANGE = -7, // bad value for weight/threshold
     SET_OPTIONS_BAD_SIGNER = -8,             // signer cannot be masterkey
-    SET_OPTIONS_INVALID_HOME_DOMAIN = -9,    // malformed home domain
-    SET_OPTIONS_AUTH_REVOCABLE_REQUIRED =
-        -10 // auth revocable is required for clawback
+    SET_OPTIONS_INVALID_HOME_DOMAIN = -9     // malformed home domain
 };
 
 union SetOptionsResult switch (SetOptionsResultCode code)
@@ -1569,7 +1485,7 @@ enum AccountMergeResultCode
 union AccountMergeResult switch (AccountMergeResultCode code)
 {
 case ACCOUNT_MERGE_SUCCESS:
-    int64 sourceAccountBalance; // how much got transferred from source account
+    int64 sourceAccountBalance; // how much got transfered from source account
 default:
     void;
 };
@@ -1694,8 +1610,7 @@ enum BeginSponsoringFutureReservesResultCode
     BEGIN_SPONSORING_FUTURE_RESERVES_RECURSIVE = -3
 };
 
-union BeginSponsoringFutureReservesResult switch (
-    BeginSponsoringFutureReservesResultCode code)
+union BeginSponsoringFutureReservesResult switch (BeginSponsoringFutureReservesResultCode code)
 {
 case BEGIN_SPONSORING_FUTURE_RESERVES_SUCCESS:
     void;
@@ -1714,8 +1629,7 @@ enum EndSponsoringFutureReservesResultCode
     END_SPONSORING_FUTURE_RESERVES_NOT_SPONSORED = -1
 };
 
-union EndSponsoringFutureReservesResult switch (
-    EndSponsoringFutureReservesResultCode code)
+union EndSponsoringFutureReservesResult switch (EndSponsoringFutureReservesResultCode code)
 {
 case END_SPONSORING_FUTURE_RESERVES_SUCCESS:
     void;
@@ -1740,72 +1654,6 @@ enum RevokeSponsorshipResultCode
 union RevokeSponsorshipResult switch (RevokeSponsorshipResultCode code)
 {
 case REVOKE_SPONSORSHIP_SUCCESS:
-    void;
-default:
-    void;
-};
-
-/******* Clawback Result ********/
-
-enum ClawbackResultCode
-{
-    // codes considered as "success" for the operation
-    CLAWBACK_SUCCESS = 0,
-
-    // codes considered as "failure" for the operation
-    CLAWBACK_MALFORMED = -1,
-    CLAWBACK_NOT_CLAWBACK_ENABLED = -2,
-    CLAWBACK_NO_TRUST = -3,
-    CLAWBACK_UNDERFUNDED = -4
-};
-
-union ClawbackResult switch (ClawbackResultCode code)
-{
-case CLAWBACK_SUCCESS:
-    void;
-default:
-    void;
-};
-
-/******* ClawbackClaimableBalance Result ********/
-
-enum ClawbackClaimableBalanceResultCode
-{
-    // codes considered as "success" for the operation
-    CLAWBACK_CLAIMABLE_BALANCE_SUCCESS = 0,
-
-    // codes considered as "failure" for the operation
-    CLAWBACK_CLAIMABLE_BALANCE_DOES_NOT_EXIST = -1,
-    CLAWBACK_CLAIMABLE_BALANCE_NOT_ISSUER = -2,
-    CLAWBACK_CLAIMABLE_BALANCE_NOT_CLAWBACK_ENABLED = -3
-};
-
-union ClawbackClaimableBalanceResult switch (
-    ClawbackClaimableBalanceResultCode code)
-{
-case CLAWBACK_CLAIMABLE_BALANCE_SUCCESS:
-    void;
-default:
-    void;
-};
-
-/******* SetTrustLineFlags Result ********/
-
-enum SetTrustLineFlagsResultCode
-{
-    // codes considered as "success" for the operation
-    SET_TRUST_LINE_FLAGS_SUCCESS = 0,
-
-    // codes considered as "failure" for the operation
-    SET_TRUST_LINE_FLAGS_MALFORMED = -1,
-    SET_TRUST_LINE_FLAGS_NO_TRUST_LINE = -2,
-    SET_TRUST_LINE_FLAGS_CANT_REVOKE = -3,
-    SET_TRUST_LINE_FLAGS_INVALID_STATE = -4
-};
-
-union SetTrustLineFlagsResult switch (SetTrustLineFlagsResultCode code)
-{
-case SET_TRUST_LINE_FLAGS_SUCCESS:
     void;
 default:
     void;
@@ -1867,12 +1715,6 @@ case opINNER:
         EndSponsoringFutureReservesResult endSponsoringFutureReservesResult;
     case REVOKE_SPONSORSHIP:
         RevokeSponsorshipResult revokeSponsorshipResult;
-    case CLAWBACK:
-        ClawbackResult clawbackResult;
-    case CLAWBACK_CLAIMABLE_BALANCE:
-        ClawbackClaimableBalanceResult clawbackClaimableBalanceResult;
-    case SET_TRUST_LINE_FLAGS:
-        SetTrustLineFlagsResult setTrustLineFlagsResult;
     }
     tr;
 default:
@@ -1896,7 +1738,7 @@ enum TransactionResultCode
     txNO_ACCOUNT = -8,           // source account not found
     txINSUFFICIENT_FEE = -9,     // fee is too small
     txBAD_AUTH_EXTRA = -10,      // unused signatures attached to transaction
-    txINTERNAL_ERROR = -11,      // an unknown error occurred
+    txINTERNAL_ERROR = -11,      // an unknown error occured
 
     txNOT_SUPPORTED = -12,         // transaction type not supported
     txFEE_BUMP_INNER_FAILED = -13, // fee bump inner transaction failed
@@ -1975,7 +1817,7 @@ struct TransactionResult
 };
 }
 
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -2037,16 +1879,16 @@ struct LedgerHeader
 
     uint32 ledgerSeq; // sequence number of this ledger
 
-    int64 totalCoins; // total number of stroops in existence.
-                      // 10,000,000 stroops in 1 XLM
+    int64 totalCoins; // total number of nibbs in existence.
+                      // 10,000,000 nibbs in 1 XDB
 
     int64 feePool;       // fees burned since last inflation run
     uint32 inflationSeq; // inflation sequence number
 
     uint64 idPool; // last used global ID, used for generating objects
 
-    uint32 baseFee;     // base fee per operation in stroops
-    uint32 baseReserve; // account base reserve in stroops
+    uint32 baseFee;     // base fee per operation in nibbs
+    uint32 baseReserve; // account base reserve in nibbs
 
     uint32 maxTxSetSize; // maximum size a transaction set can be
 
@@ -2316,7 +2158,7 @@ case 0:
 };
 }
 
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
@@ -2546,7 +2388,7 @@ case 0:
 };
 }
 
-// Copyright 2021 XDB Foundation and contributors. Licensed
+// Copyright 2015 DigitalBits Development Foundation and contributors. Licensed
 // under the Apache License, Version 2.0. See the COPYING file at the root
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 

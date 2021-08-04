@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class FeeBumpTransactionEnvelope < XDR::Struct
     attribute :tx,         FeeBumpTransaction
     attribute :signatures, XDR::VarArray[DecoratedSignature, 20]

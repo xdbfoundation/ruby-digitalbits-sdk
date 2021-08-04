@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class MemoType < XDR::Enum
     member :memo_none,   0
     member :memo_text,   1

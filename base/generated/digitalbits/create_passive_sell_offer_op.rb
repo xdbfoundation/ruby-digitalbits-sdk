@@ -9,12 +9,12 @@ require 'xdr'
 #   {
 #       Asset selling; // A
 #       Asset buying;  // B
-#       int64 amount;  // amount taker gets
+#       int64 amount;  // amount taker gets. if set to 0, delete the offer
 #       Price price;   // cost of A in terms of B
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class CreatePassiveSellOfferOp < XDR::Struct
     attribute :selling, Asset
     attribute :buying,  Asset

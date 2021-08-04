@@ -25,21 +25,21 @@ A simple payment from the root account to some random accounts
 ```ruby
 require 'digitalbits-sdk'
 
-account   = DigitalBits::Account.master
-client    = DigitalBits::Client.default_testnet()
-recipient = DigitalBits::Account.random
+account   = Digitalbits::Account.master
+client    = Digitalbits::Client.default_testnet()
+recipient = Digitalbits::Account.random
 
 client.send_payment({
   from:   account,
   to:     recipient,
-  amount: DigitalBits::Amount.new(100_000_000)
+  amount: Digitalbits::Amount.new(100_000_000)
 })
 ```
 
-Be sure to set the network when submitting to the public network (more information in [digitalbits-base](https://www.github.com/xdbfoundation/ruby-digitalbits-base)):
+Be sure to set the network when submitting to the public network (more information in [digitalbits-base](https://www.github.com/xdbfoundation/ruby-digitalbits-sdk/tree/master/base)):
 
 ```ruby
-DigitalBits.default_network = DigitalBits::Networks::PUBLIC
+Digitalbits.default_network = Digitalbits::Networks::PUBLIC
 ```
 
 ## Development

@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class BumpSequenceOp < XDR::Struct
     attribute :bump_to, SequenceNumber
   end

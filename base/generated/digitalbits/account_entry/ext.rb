@@ -14,7 +14,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class AccountEntry
     class Ext < XDR::Union
       switch_on XDR::Int, :v

@@ -14,7 +14,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class DigitalBitsValue
     class Ext < XDR::Union
       switch_on DigitalBitsValueType, :v

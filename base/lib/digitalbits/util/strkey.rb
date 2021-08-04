@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   module Util
     require "base32"
     require "digest/crc16_xmodem"
@@ -21,11 +21,11 @@ module DigitalBits
         Base32.encode(payload + check).tr("=", "")
       end
 
-      # Converts an DigitalBits::MuxedAccount to its string representation, forcing the ed25519 representation.
-      # @param muxed_account [DigitalBits::MuxedAccount] account
+      # Converts an Digitalbits::MuxedAccount to its string representation, forcing the ed25519 representation.
+      # @param muxed_account [Digitalbits::MuxedAccount] account
       # @return [String] "G.."-like address
       def self.encode_muxed_account(muxed_account)
-        ed25519 = if muxed_account.switch == DigitalBits::CryptoKeyType.key_type_ed25519
+        ed25519 = if muxed_account.switch == Digitalbits::CryptoKeyType.key_type_ed25519
           muxed_account.ed25519!
         else
           muxed_account.med25519!.ed25519
@@ -34,12 +34,12 @@ module DigitalBits
         check_encode(:account_id, ed25519)
       end
 
-      # Returns a DigitalBits::MuxedAccount, forcing the ed25519 discriminant
+      # Returns a Digitalbits::MuxedAccount, forcing the ed25519 discriminant
       #
       # @param strkey [String] address string to decode
-      # @return [DigitalBits::MuxedAccount] MuxedAccount with ed25519 discriminant
+      # @return [Digitalbits::MuxedAccount] MuxedAccount with ed25519 discriminant
       def self.decode_muxed_account(strkey)
-        DigitalBits::MuxedAccount.new(:key_type_ed25519, check_decode(:account_id, strkey))
+        Digitalbits::MuxedAccount.new(:key_type_ed25519, check_decode(:account_id, strkey))
       end
 
       def self.check_decode(expected_version, str)

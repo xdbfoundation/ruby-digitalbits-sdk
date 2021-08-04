@@ -13,7 +13,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class OperationID
     class Id < XDR::Struct
       attribute :source_account, MuxedAccount

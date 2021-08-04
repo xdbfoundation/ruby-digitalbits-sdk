@@ -22,7 +22,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ManageOfferSuccessResult < XDR::Struct
     include XDR::Namespace
 

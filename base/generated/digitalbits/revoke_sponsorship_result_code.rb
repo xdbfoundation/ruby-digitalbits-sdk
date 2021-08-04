@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class RevokeSponsorshipResultCode < XDR::Enum
     member :revoke_sponsorship_success,           0
     member :revoke_sponsorship_does_not_exist,    -1

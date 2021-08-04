@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Price < XDR::Struct
     attribute :n, Int32
     attribute :d, Int32

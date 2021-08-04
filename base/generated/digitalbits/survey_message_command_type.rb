@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SurveyMessageCommandType < XDR::Enum
     member :survey_topology, 0
 

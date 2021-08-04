@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class OfferEntryFlags < XDR::Enum
     member :passive_flag, 1
 

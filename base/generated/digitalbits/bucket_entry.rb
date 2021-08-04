@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class BucketEntry < XDR::Union
     switch_on BucketEntryType, :type
 

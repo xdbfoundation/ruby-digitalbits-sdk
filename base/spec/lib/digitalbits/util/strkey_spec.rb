@@ -1,5 +1,5 @@
-RSpec.describe DigitalBits::Util::StrKey do
-  subject { DigitalBits::Util::StrKey }
+RSpec.describe Digitalbits::Util::StrKey do
+  subject { Digitalbits::Util::StrKey }
 
   def decode(version, bytes)
     subject.check_decode(version, bytes)
@@ -51,7 +51,7 @@ RSpec.describe DigitalBits::Util::StrKey do
       let(:ed25519) do
         decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
       end
-      let(:muxed_account) { DigitalBits::MuxedAccount.new(:key_type_ed25519, ed25519) }
+      let(:muxed_account) { Digitalbits::MuxedAccount.new(:key_type_ed25519, ed25519) }
 
       it "encodes muxed account as ed25519" do
         strkey = subject.encode_muxed_account(muxed_account)
@@ -61,13 +61,13 @@ RSpec.describe DigitalBits::Util::StrKey do
 
     context "when med25519 account is given" do
       let(:med25519) do
-        DigitalBits::MuxedAccount::Med25519.new(
+        Digitalbits::MuxedAccount::Med25519.new(
           id: 0,
           ed25519: decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
         )
       end
 
-      let(:muxed_account) { DigitalBits::MuxedAccount.new(:key_type_muxed_ed25519, med25519) }
+      let(:muxed_account) { Digitalbits::MuxedAccount.new(:key_type_muxed_ed25519, med25519) }
 
       it "encodes muxed account as ed25519" do
         strkey = subject.encode_muxed_account(muxed_account)
@@ -78,7 +78,7 @@ RSpec.describe DigitalBits::Util::StrKey do
 
   describe "#decode_muxed_account" do
     let(:med25519) do
-      DigitalBits::MuxedAccount::Med25519.new(
+      Digitalbits::MuxedAccount::Med25519.new(
         id: 0,
         ed25519: decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
       )
@@ -86,7 +86,7 @@ RSpec.describe DigitalBits::Util::StrKey do
 
     it "decodes ed25519 correctly" do
       raw_ed25519 = decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
-      expected = DigitalBits::MuxedAccount.new(:key_type_ed25519, raw_ed25519)
+      expected = Digitalbits::MuxedAccount.new(:key_type_ed25519, raw_ed25519)
 
       strkey = "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ"
 

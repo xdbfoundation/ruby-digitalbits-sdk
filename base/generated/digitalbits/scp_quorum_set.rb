@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class SCPQuorumSet < XDR::Struct
     attribute :threshold,  Uint32
     attribute :validators, XDR::VarArray[PublicKey]

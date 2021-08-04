@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerEntryType < XDR::Enum
     member :account,           0
     member :trustline,         1

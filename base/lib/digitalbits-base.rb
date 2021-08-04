@@ -14,12 +14,12 @@ require_relative "digitalbits/ext/xdr"
 silence_warnings do
   require "digitalbits-base-generated"
 end
-DigitalBits.load_all!
+Digitalbits.load_all!
 
 require_relative "digitalbits/version"
 
-DigitalBits::ONE = 1_0000000
-DigitalBits::Deprecation = ActiveSupport::Deprecation.new("next release", "digitalbits-base")
+Digitalbits::ONE = 1_0000000
+Digitalbits::Deprecation = ActiveSupport::Deprecation.new("next release", "digitalbits-base")
 
 # extensions onto the generated files must be loaded manually, below
 

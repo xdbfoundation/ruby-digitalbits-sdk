@@ -33,7 +33,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class MessageType < XDR::Enum
     member :error_msg,         0
     member :auth,              2

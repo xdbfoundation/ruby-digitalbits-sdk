@@ -1,10 +1,10 @@
-module DigitalBits
+module Digitalbits
   class AccountFlags
     #
-    # Converts an array of DigitalBits::AccountFlags members into
+    # Converts an array of Digitalbits::AccountFlags members into
     # an Integer suitable for use in a SetOptionsOp.
     #
-    # @param flags [Array<DigitalBits::AccountFlags>] the flags to combine
+    # @param flags [Array<Digitalbits::AccountFlags>] the flags to combine
     #
     # @return [Fixnum] the combined result
     def self.make_mask(flags = nil)
@@ -15,10 +15,10 @@ module DigitalBits
 
     #
     # Converts an integer used in SetOptionsOp on the set/clear flag options
-    # into an array of DigitalBits::AccountFlags members
+    # into an array of Digitalbits::AccountFlags members
     #
     #  @param combined [Fixnum]
-    #  @return [Array<DigitalBits::AccountFlags>]
+    #  @return [Array<Digitalbits::AccountFlags>]
     def self.parse_mask(combined)
       members.values.select { |m| (m.value & combined) != 0 }
     end

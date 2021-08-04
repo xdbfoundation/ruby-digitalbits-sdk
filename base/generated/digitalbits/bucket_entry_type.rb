@@ -16,7 +16,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class BucketEntryType < XDR::Enum
     member :metaentry, -1
     member :liveentry, 0

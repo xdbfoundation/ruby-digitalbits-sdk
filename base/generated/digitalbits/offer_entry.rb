@@ -31,7 +31,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class OfferEntry < XDR::Struct
     include XDR::Namespace
 

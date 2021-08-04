@@ -1,17 +1,17 @@
-module DigitalBits
+module Digitalbits
   module DSL
     module_function
 
     # Constructs a new ClaimPredicate using DSL
     #
     # @example fulfilled during [T+5min, T+60min] period, where T refers to claimable balance entry creation time
-    #   DigitalBits::ClaimPredicate { before_relative_time(1.hour) & ~before_relative_time(5.minutes) }
+    #   Digitalbits::ClaimPredicate { before_relative_time(1.hour) & ~before_relative_time(5.minutes) }
     #
     # @example not fulfilled starting from today midnight until tomorrow midnight,
-    #   DigitalBits::ClaimPredicate { before_absolute_time(Date.today.end_of_day) | ~before_absolute_time(Date.tomorrow.end_of_day) }
+    #   Digitalbits::ClaimPredicate { before_absolute_time(Date.today.end_of_day) | ~before_absolute_time(Date.tomorrow.end_of_day) }
     #
     # @example always fulfilled
-    #   DigitalBits::ClaimPredicate { }
+    #   Digitalbits::ClaimPredicate { }
     def ClaimPredicate(&block)
       return ClaimPredicate.unconditional unless block
       ClaimPredicate.compose(&block)
@@ -28,8 +28,8 @@ module DigitalBits
     end
 
     # @param [Asset, String, nil] subject
-    # @return [DigitalBits::Asset] instance of the DigitalBits::Asset
-    # @raise [TypeError] if subject cannot be converted to DigitalBits::Asset
+    # @return [Digitalbits::Asset] instance of the Digitalbits::Asset
+    # @raise [TypeError] if subject cannot be converted to Digitalbits::Asset
     def Asset(subject = nil)
       case subject
       when Asset
@@ -41,14 +41,14 @@ module DigitalBits
       when /^([0-9A-Z]{5,12})[-:](G[A-Z0-9]{55})$/
         Asset.alphanum12($1, KeyPair($2))
       else
-        raise TypeError, "Cannot convert #{subject.inspect} to DigitalBits::Asset"
+        raise TypeError, "Cannot convert #{subject.inspect} to Digitalbits::Asset"
       end
     end
 
-    # Generates DigitalBits::Keypair from subject, use DigitalBits::Client.to_keypair as shortcut.
-    # @param subject [String|DigitalBits::Account|DigitalBits::PublicKey|DigitalBits::SignerKey|DigitalBits::Keypair] subject.
-    # @return [DigitalBits::Keypair] DigitalBits::Keypair instance.
-    # @raise [TypeError] if subject cannot be converted to DigitalBits::KeyPair
+    # Generates Digitalbits::Keypair from subject, use Digitalbits::Client.to_keypair as shortcut.
+    # @param subject [String|Digitalbits::Account|Digitalbits::PublicKey|Digitalbits::SignerKey|Digitalbits::Keypair] subject.
+    # @return [Digitalbits::Keypair] Digitalbits::Keypair instance.
+    # @raise [TypeError] if subject cannot be converted to Digitalbits::KeyPair
     def KeyPair(subject = nil)
       case subject
       when ->(subj) { subj.respond_to?(:to_keypair) }
@@ -66,21 +66,21 @@ module DigitalBits
       when nil
         KeyPair.random
       else
-        raise TypeError, "cannot convert #{subject.inspect} to DigitalBits::KeyPair"
+        raise TypeError, "cannot convert #{subject.inspect} to Digitalbits::KeyPair"
       end
     end
 
     # Provides conversion from different input types into the SignerKey to use in ManageData operation.
-    # @param input [String|zDigitalBits::Account|DigitalBits::PublicKey|DigitalBits::SignerKey|DigitalBits::Keypair] subject.
-    # @return [DigitalBits::SignerKey] DigitalBits::Keypair instance.
+    # @param input [String|zDigitalbits::Account|Digitalbits::PublicKey|Digitalbits::SignerKey|Digitalbits::Keypair] subject.
+    # @return [Digitalbits::SignerKey] Digitalbits::Keypair instance.
     def SignerKey(input = nil)
       case input
       when Transaction
         SignerKey.pre_auth_tx(input.hash)
       when /^[0-9A-Za-z+\/=]{44}$/
-        SignerKey.hash_x(DigitalBits::Convert.from_base64(input))
+        SignerKey.hash_x(Digitalbits::Convert.from_base64(input))
       when /^[0-9a-f]{64}$/
-        SignerKey.hash_x(DigitalBits::Convert.from_hex(input))
+        SignerKey.hash_x(Digitalbits::Convert.from_hex(input))
       when /^.{32}$/
         SignerKey.hash_x(input)
       else

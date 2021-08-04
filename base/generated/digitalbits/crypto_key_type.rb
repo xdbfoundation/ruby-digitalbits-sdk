@@ -16,7 +16,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class CryptoKeyType < XDR::Enum
     member :key_type_ed25519,       0
     member :key_type_pre_auth_tx,   1

@@ -1,5 +1,5 @@
-RSpec.describe DigitalBits::SignerKey, ".hash_x" do
-  subject { DigitalBits::SignerKey }
+RSpec.describe Digitalbits::SignerKey, ".hash_x" do
+  subject { Digitalbits::SignerKey }
 
   let(:hash_preimage) { "a" * 32 }
   let(:hash) { Digest::SHA256.digest(hash_preimage) }
@@ -14,7 +14,7 @@ RSpec.describe DigitalBits::SignerKey, ".hash_x" do
 
   it "creates a HashX signer key" do
     sk = subject.hash_x(hash_preimage)
-    expect(sk.switch).to eq(DigitalBits::SignerKeyType.signer_key_type_hash_x)
+    expect(sk.switch).to eq(Digitalbits::SignerKeyType.signer_key_type_hash_x)
     expect(sk.value).to be_an_instance_of(String)
     expect(sk.value).to eq(hash)
   end

@@ -24,7 +24,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class LedgerCloseMetaV0 < XDR::Struct
     attribute :ledger_header,       LedgerHeaderHistoryEntry
     attribute :tx_set,              TransactionSet

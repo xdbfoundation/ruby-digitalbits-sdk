@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class ClaimableBalanceIDType < XDR::Enum
     member :claimable_balance_id_type_v0, 0
 

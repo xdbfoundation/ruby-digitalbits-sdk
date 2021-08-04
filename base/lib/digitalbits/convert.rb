@@ -1,4 +1,4 @@
-module DigitalBits
+module Digitalbits
   #
   # Generic format conversion module
   #
@@ -21,10 +21,10 @@ module DigitalBits
       Base64.strict_decode64(base64_string)
     end
 
-    ## Converts a DigitalBits::PublicKey instance (or any typedef of it such as
-    # DigitalBits::AccountID) to an address
+    ## Converts a Digitalbits::PublicKey instance (or any typedef of it such as
+    # Digitalbits::AccountID) to an address
     def pk_to_address(pk)
-      DigitalBits::Util::StrKey.check_encode(:account_id, pk.ed25519!)
+      Digitalbits::Util::StrKey.check_encode(:account_id, pk.ed25519!)
     end
 
     extend self

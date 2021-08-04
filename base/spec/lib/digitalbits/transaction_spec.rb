@@ -1,17 +1,17 @@
-RSpec.describe DigitalBits::Transaction do
+RSpec.describe Digitalbits::Transaction do
   subject do
-    DigitalBits::Transaction.new({
-      source_account: DigitalBits::MuxedAccount.new(:key_type_ed25519, "\x00" * 32),
+    Digitalbits::Transaction.new({
+      source_account: Digitalbits::MuxedAccount.new(:key_type_ed25519, "\x00" * 32),
       fee: 10,
       seq_num: 1,
-      memo: DigitalBits::Memo.new(:memo_none),
-      ext: DigitalBits::Transaction::Ext.new(0),
+      memo: Digitalbits::Memo.new(:memo_none),
+      ext: Digitalbits::Transaction::Ext.new(0),
       operations: [
-        DigitalBits::Operation.new(body: DigitalBits::Operation::Body.new(:inflation))
+        Digitalbits::Operation.new(body: Digitalbits::Operation::Body.new(:inflation))
       ]
     })
   end
-  let(:key_pair) { DigitalBits::KeyPair.random }
+  let(:key_pair) { Digitalbits::KeyPair.random }
 
   describe "#sign" do
     let(:result) { subject.sign(key_pair) }
@@ -29,13 +29,13 @@ RSpec.describe DigitalBits::Transaction do
     context "with a single key pair as a parameter" do
       let(:key_pairs) { [key_pair] }
 
-      it "return a DigitalBits::TransactionEnvelope" do
-        expect(result).to be_a(DigitalBits::TransactionEnvelope)
+      it "return a Digitalbits::TransactionEnvelope" do
+        expect(result).to be_a(Digitalbits::TransactionEnvelope)
       end
 
       it "correctly signs the transaction" do
         expect(result.signatures.length).to eq(1)
-        expect(result.signatures.first).to be_a(DigitalBits::DecoratedSignature)
+        expect(result.signatures.first).to be_a(Digitalbits::DecoratedSignature)
         expect(result.signatures.first.hint).to eq(key_pair.signature_hint)
         expect(result.signatures.first.signature).to eq(subject.sign(key_pair))
       end
@@ -44,8 +44,8 @@ RSpec.describe DigitalBits::Transaction do
     context "with no keypairs provided as parameters" do
       let(:key_pairs) { [] }
 
-      it "return a DigitalBits::TransactionEnvelope" do
-        expect(result).to be_a(DigitalBits::TransactionEnvelope)
+      it "return a Digitalbits::TransactionEnvelope" do
+        expect(result).to be_a(Digitalbits::TransactionEnvelope)
       end
 
       it "adds no signatures" do
@@ -56,7 +56,7 @@ RSpec.describe DigitalBits::Transaction do
 
   describe "#signature_base" do
     it "is prefixed with the current network id" do
-      expect(subject.signature_base).to start_with(DigitalBits.current_network_id)
+      expect(subject.signature_base).to start_with(Digitalbits.current_network_id)
     end
 
     it "includes the envelope type" do

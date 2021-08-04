@@ -1,5 +1,5 @@
-RSpec.describe DigitalBits::Client do
-  subject(:client) { DigitalBits::Client.default_testnet }
+RSpec.describe Digitalbits::Client do
+  subject(:client) { Digitalbits::Client.default_testnet }
 
   describe "headers" do
     let(:headers) { client.frontier.headers }
@@ -14,7 +14,7 @@ RSpec.describe DigitalBits::Client do
     end
 
     it "has 'X-Client-Version'" do
-      expect(headers["X-Client-Version"]).to eq DigitalBits::VERSION
+      expect(headers["X-Client-Version"]).to eq Digitalbits::VERSION
     end
   end
 
@@ -48,8 +48,8 @@ RSpec.describe DigitalBits::Client do
   end
 
   describe "#friendbot" do
-    let(:client) { DigitalBits::Client.default_testnet }
-    let(:account) { DigitalBits::Account.random }
+    let(:client) { Digitalbits::Client.default_testnet }
+    let(:account) { Digitalbits::Account.random }
 
     it("requests for XLM from a friendbot", {
       vcr: {record: :once, match_requests_on: [:method]}
@@ -69,8 +69,8 @@ RSpec.describe DigitalBits::Client do
   end
 
   describe "#create_account" do
-    let(:source) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
-    let(:destination) { DigitalBits::Account.random }
+    let(:source) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
+    let(:destination) { Digitalbits::Account.random }
 
     it "creates the account", vcr: {record: :once, match_requests_on: [:method]} do
       client.create_account(
@@ -90,8 +90,8 @@ RSpec.describe DigitalBits::Client do
   end
 
   describe "#account_info" do
-    let(:account) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
-    let(:client) { DigitalBits::Client.default_testnet }
+    let(:account) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
+    let(:client) { Digitalbits::Client.default_testnet }
 
     it "returns the current details for the account", vcr: {record: :once, match_requests_on: [:method]} do
       response = client.account_info(account)
@@ -114,10 +114,10 @@ RSpec.describe DigitalBits::Client do
   end
 
   describe "#account_merge" do
-    let(:funder) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
-    let(:client) { DigitalBits::Client.default_testnet }
-    let(:source) { DigitalBits::Account.random }
-    let(:destination) { DigitalBits::Account.random }
+    let(:funder) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
+    let(:client) { Digitalbits::Client.default_testnet }
+    let(:source) { Digitalbits::Account.random }
+    let(:destination) { Digitalbits::Account.random }
 
     it "merges source account into destination", vcr: {record: :once, match_requests_on: [:method]} do
       [source, destination].each do |account|
@@ -143,10 +143,10 @@ RSpec.describe DigitalBits::Client do
   end
 
   describe "#send_payment" do
-    let(:source) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
+    let(:source) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
 
     context "native asset" do
-      let(:destination) { DigitalBits::Account.random }
+      let(:destination) { Digitalbits::Account.random }
 
       it "sends a native payment to the account", vcr: {record: :once, match_requests_on: [:method]} do
         client.create_account(
@@ -155,7 +155,7 @@ RSpec.describe DigitalBits::Client do
           starting_balance: 100
         )
 
-        amount = DigitalBits::Amount.new(150)
+        amount = Digitalbits::Amount.new(150)
 
         client.send_payment(
           from: source,
@@ -174,8 +174,8 @@ RSpec.describe DigitalBits::Client do
     end
 
     context "alphanum4 asset" do
-      let(:issuer) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
-      let(:destination) { DigitalBits::Account.random }
+      let(:issuer) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
+      let(:destination) { Digitalbits::Account.random }
 
       it("sends a alphanum4 asset to the destination", {
         vcr: {record: :once, match_requests_on: [:method]}
@@ -191,8 +191,8 @@ RSpec.describe DigitalBits::Client do
           source: destination
         )
 
-        asset = DigitalBits::Asset.alphanum4("BTC", source.keypair)
-        amount = DigitalBits::Amount.new(150, asset)
+        asset = Digitalbits::Asset.alphanum4("BTC", source.keypair)
+        amount = Digitalbits::Amount.new(150, asset)
         client.send_payment(
           from: source,
           to: destination,
@@ -209,8 +209,8 @@ RSpec.describe DigitalBits::Client do
     end
 
     context "alphanum12 asset" do
-      let(:issuer) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
-      let(:destination) { DigitalBits::Account.random }
+      let(:issuer) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
+      let(:destination) { Digitalbits::Account.random }
 
       it("sends a alphanum12 asset to the destination", {
         vcr: {record: :once, match_requests_on: [:method]}
@@ -226,8 +226,8 @@ RSpec.describe DigitalBits::Client do
           source: destination
         )
 
-        asset = DigitalBits::Asset.alphanum12("LONGNAME", source.keypair)
-        amount = DigitalBits::Amount.new(150, asset)
+        asset = Digitalbits::Asset.alphanum12("LONGNAME", source.keypair)
+        amount = Digitalbits::Amount.new(150, asset)
 
         client.send_payment(
           from: source,
@@ -245,7 +245,7 @@ RSpec.describe DigitalBits::Client do
     end
 
     context "memo" do
-      let(:destination) { DigitalBits::Account.random }
+      let(:destination) { Digitalbits::Account.random }
 
       it("accepts the memo attribute", {
         vcr: {record: :once, match_requests_on: [:method]}
@@ -256,7 +256,7 @@ RSpec.describe DigitalBits::Client do
           starting_balance: 100
         )
 
-        amount = DigitalBits::Amount.new(150)
+        amount = Digitalbits::Amount.new(150)
 
         client.send_payment(
           from: source,
@@ -272,8 +272,8 @@ RSpec.describe DigitalBits::Client do
     end
 
     context "using a payment channel" do
-      let(:transaction_source) { DigitalBits::Account.from_seed(CONFIG[:channel_seed]) }
-      let(:destination) { DigitalBits::Account.random }
+      let(:transaction_source) { Digitalbits::Account.from_seed(CONFIG[:channel_seed]) }
+      let(:destination) { Digitalbits::Account.random }
 
       it("sends a payment account through a channel account", {
         vcr: {record: :once, match_requests_on: [:method]}
@@ -287,7 +287,7 @@ RSpec.describe DigitalBits::Client do
         tx = client.send_payment(
           from: source,
           to: destination,
-          amount: DigitalBits::Amount.new(0.55),
+          amount: Digitalbits::Amount.new(0.55),
           transaction_source: transaction_source
         )
 
@@ -320,7 +320,7 @@ RSpec.describe DigitalBits::Client do
         tx = client.send_payment(
           from: source,
           to: destination,
-          amount: DigitalBits::Amount.new(0.55),
+          amount: Digitalbits::Amount.new(0.55),
           transaction_source: source
         )
 
@@ -339,37 +339,37 @@ RSpec.describe DigitalBits::Client do
     let(:cursor) { "348403452088320" }
 
     context "account transactions" do
-      let(:account) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
+      let(:account) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
 
       it "returns a list of transaction for an account", vcr: {record: :once, match_requests_on: [:method]} do
         response = client.transactions(account: account)
-        expect(response).to be_a(DigitalBits::TransactionPage)
+        expect(response).to be_a(Digitalbits::TransactionPage)
       end
 
       it "accepts a cursor to return less data", vcr: {record: :once, match_requests_on: [:method]} do
         response = client.transactions(account: account,
                                        cursor: cursor)
-        expect(response).to be_a(DigitalBits::TransactionPage)
+        expect(response).to be_a(Digitalbits::TransactionPage)
       end
     end
 
     context "all transactions" do
       it "returns a list of transactions", vcr: {record: :once, match_requests_on: [:method]} do
         response = client.transactions
-        expect(response).to be_a(DigitalBits::TransactionPage)
+        expect(response).to be_a(Digitalbits::TransactionPage)
       end
 
       it "accepts a cursor to return less data", vcr: {record: :once, match_requests_on: [:method]} do
         response = client.transactions(cursor: cursor)
-        expect(response).to be_a(DigitalBits::TransactionPage)
+        expect(response).to be_a(Digitalbits::TransactionPage)
       end
     end
   end
 
   describe "#change_trust" do
     context "given an asset described as an array" do
-      let(:issuer) { DigitalBits::Account.from_seed(CONFIG[:source_seed]) }
-      let(:truster) { DigitalBits::Account.random }
+      let(:issuer) { Digitalbits::Account.from_seed(CONFIG[:source_seed]) }
+      let(:truster) { Digitalbits::Account.random }
 
       it("creates, updates, or deletes a trustline", {
         vcr: {record: :once, match_requests_on: [:method]}
@@ -425,21 +425,21 @@ RSpec.describe DigitalBits::Client do
   end
 
   describe "#submit_transaction" do
-    let(:kp) { DigitalBits::KeyPair.from_seed("SA27TR6PZVJOD24LJUBYQLJXYBXV6JW6ZZCJYLTHQ6KVMZZISC63SUBA") }
-    let(:memo_required_kp) { DigitalBits::KeyPair.from_seed("SAUZR3L5N43GQQZWO5HDSQJ76J65H5BUCNDRQB4DMA72ZJUXNUXVVTJY") }
+    let(:kp) { Digitalbits::KeyPair.from_seed("SA27TR6PZVJOD24LJUBYQLJXYBXV6JW6ZZCJYLTHQ6KVMZZISC63SUBA") }
+    let(:memo_required_kp) { Digitalbits::KeyPair.from_seed("SAUZR3L5N43GQQZWO5HDSQJ76J65H5BUCNDRQB4DMA72ZJUXNUXVVTJY") }
 
     it("doesn't raise an error when a transaction has a memo", {
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num,
-        memo: DigitalBits::Memo.new(:memo_text, "test memo")
+        memo: Digitalbits::Memo.new(:memo_text, "test memo")
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
@@ -451,13 +451,13 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
@@ -466,7 +466,7 @@ RSpec.describe DigitalBits::Client do
         client.submit_transaction(tx_envelope: envelope)
       }.to raise_error(
         an_instance_of(
-          DigitalBits::AccountRequiresMemoError
+          Digitalbits::AccountRequiresMemoError
         ).and(
           having_attributes(
             message: "account requires memo",
@@ -481,17 +481,17 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num,
-        memo: DigitalBits::Memo.new(:memo_text, "test memo")
+        memo: Digitalbits::Memo.new(:memo_text, "test memo")
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: seq_num + 2})
+        Digitalbits::Operation.bump_sequence({bump_to: seq_num + 2})
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
 
@@ -502,15 +502,15 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num
       ).add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: seq_num + 2})
+        Digitalbits::Operation.bump_sequence({bump_to: seq_num + 2})
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
@@ -519,7 +519,7 @@ RSpec.describe DigitalBits::Client do
         client.submit_transaction(tx_envelope: envelope)
       }.to raise_error(
         an_instance_of(
-          DigitalBits::AccountRequiresMemoError
+          Digitalbits::AccountRequiresMemoError
         ).and(
           having_attributes(
             message: "account requires memo",
@@ -534,11 +534,11 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num
       ).add_operation(
-        DigitalBits::Operation.bump_sequence({bump_to: seq_num + 2})
+        Digitalbits::Operation.bump_sequence({bump_to: seq_num + 2})
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
 
@@ -548,20 +548,20 @@ RSpec.describe DigitalBits::Client do
 
   # TODO refactor using contexts and moving tx building out of examples
   describe "#check_memo_required" do
-    let(:kp) { DigitalBits::KeyPair.from_seed("SA27TR6PZVJOD24LJUBYQLJXYBXV6JW6ZZCJYLTHQ6KVMZZISC63SUBA") }
-    let(:memo_required_kp) { DigitalBits::KeyPair.from_seed("SAUZR3L5N43GQQZWO5HDSQJ76J65H5BUCNDRQB4DMA72ZJUXNUXVVTJY") }
+    let(:kp) { Digitalbits::KeyPair.from_seed("SA27TR6PZVJOD24LJUBYQLJXYBXV6JW6ZZCJYLTHQ6KVMZZISC63SUBA") }
+    let(:memo_required_kp) { Digitalbits::KeyPair.from_seed("SAUZR3L5N43GQQZWO5HDSQJ76J65H5BUCNDRQB4DMA72ZJUXNUXVVTJY") }
 
     it("raises an error for missing memo", {
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
@@ -570,7 +570,7 @@ RSpec.describe DigitalBits::Client do
         client.check_memo_required(envelope)
       }.to raise_error(
         an_instance_of(
-          DigitalBits::AccountRequiresMemoError
+          Digitalbits::AccountRequiresMemoError
         ).and(
           having_attributes(
             message: "account requires memo",
@@ -585,11 +585,11 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num
       ).add_operation(
-        DigitalBits::Operation.account_merge({
+        Digitalbits::Operation.account_merge({
           destination: memo_required_kp
         })
       ).set_timeout(600).build
@@ -599,7 +599,7 @@ RSpec.describe DigitalBits::Client do
         client.check_memo_required(envelope)
       }.to raise_error(
         an_instance_of(
-          DigitalBits::AccountRequiresMemoError
+          Digitalbits::AccountRequiresMemoError
         ).and(
           having_attributes(
             message: "account requires memo",
@@ -614,17 +614,17 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num,
-        memo: DigitalBits::Memo.new(:memo_text, "test memo")
+        memo: Digitalbits::Memo.new(:memo_text, "test memo")
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).add_operation(
-        DigitalBits::Operation.account_merge({
+        Digitalbits::Operation.account_merge({
           destination: memo_required_kp
         })
       ).set_timeout(600).build
@@ -637,14 +637,14 @@ RSpec.describe DigitalBits::Client do
       vcr: {record: :once, match_requests_on: [:method]}
     }) do
       seq_num = client.account_info(kp.address).sequence.to_i + 1
-      tx = DigitalBits::TransactionBuilder.new(
+      tx = Digitalbits::TransactionBuilder.new(
         source_account: kp,
         sequence_number: seq_num,
-        memo: DigitalBits::Memo.new(:memo_text, "test memo")
+        memo: Digitalbits::Memo.new(:memo_text, "test memo")
       ).add_operation(
-        DigitalBits::Operation.payment({
+        Digitalbits::Operation.payment({
           destination: memo_required_kp,
-          amount: [DigitalBits::Asset.native, 100]
+          amount: [Digitalbits::Asset.native, 100]
         })
       ).set_timeout(600).build
       envelope = tx.to_envelope(kp)
@@ -658,25 +658,25 @@ RSpec.describe DigitalBits::Client do
     end
 
     context "when tx is fee bump" do
-      let(:inner_tx_source) { DigitalBits::KeyPair.from_seed("SDV5KT5DLFVUA2OCBXQSKTZ7E7MBLEJ23UH5FDHGWTXFKOCN34GRR2BA") }
-      let(:fee_source) { DigitalBits::KeyPair.from_seed("SDHEM6T54CZ2OB3HM6JMHOXMLUI3GOGSR5VF26EO35I3NDWWZVPPHBGL") }
+      let(:inner_tx_source) { Digitalbits::KeyPair.from_seed("SDV5KT5DLFVUA2OCBXQSKTZ7E7MBLEJ23UH5FDHGWTXFKOCN34GRR2BA") }
+      let(:fee_source) { Digitalbits::KeyPair.from_seed("SDHEM6T54CZ2OB3HM6JMHOXMLUI3GOGSR5VF26EO35I3NDWWZVPPHBGL") }
 
       it "raises an error for missing memo", vcr: {record: :once, match_requests_on: [:method]} do
         inner_tx_seq_num = client.account_info(inner_tx_source.address).sequence.to_i + 1
 
-        inner_tx = DigitalBits::TransactionBuilder.new(
+        inner_tx = Digitalbits::TransactionBuilder.new(
           source_account: inner_tx_source,
           sequence_number: inner_tx_seq_num
         ).add_operation(
-          DigitalBits::Operation.payment(
+          Digitalbits::Operation.payment(
             destination: memo_required_kp,
-            amount: [DigitalBits::Asset.native, 100]
+            amount: [Digitalbits::Asset.native, 100]
           )
         ).set_timeout(0).build
 
         fee_bump_seq_num = client.account_info(fee_source.address).sequence.to_i + 1
 
-        fee_bump_tx = DigitalBits::TransactionBuilder.new(
+        fee_bump_tx = Digitalbits::TransactionBuilder.new(
           source_account: fee_source,
           sequence_number: fee_bump_seq_num
         ).build_fee_bump(inner_txe: inner_tx.to_envelope(inner_tx_source))
@@ -684,7 +684,7 @@ RSpec.describe DigitalBits::Client do
         envelope = fee_bump_tx.to_envelope(fee_source)
 
         expect { client.check_memo_required(envelope) }.to raise_error(
-          an_instance_of(DigitalBits::AccountRequiresMemoError).and(
+          an_instance_of(Digitalbits::AccountRequiresMemoError).and(
             having_attributes(
               message: "account requires memo",
               account_id: memo_required_kp.muxed_account,

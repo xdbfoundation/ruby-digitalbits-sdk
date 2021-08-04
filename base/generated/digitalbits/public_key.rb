@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class PublicKey < XDR::Union
     switch_on PublicKeyType, :type
 

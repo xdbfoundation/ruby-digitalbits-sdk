@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class DontHave < XDR::Struct
     attribute :type,     MessageType
     attribute :req_hash, Uint256

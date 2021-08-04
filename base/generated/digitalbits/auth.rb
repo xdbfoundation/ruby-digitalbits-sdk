@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module DigitalBits
+module Digitalbits
   class Auth < XDR::Struct
     attribute :unused, XDR::Int
   end

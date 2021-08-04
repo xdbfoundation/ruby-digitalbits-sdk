@@ -1,4 +1,4 @@
-RSpec.describe DigitalBits::SEP10 do
+RSpec.describe Digitalbits::SEP10 do
   let(:server) { KeyPair() }
   let(:user) { KeyPair() }
   let(:domain) { "testnet.digitalbits.io" }
@@ -6,7 +6,7 @@ RSpec.describe DigitalBits::SEP10 do
   let(:nonce) { SecureRandom.base64(48) }
 
   let(:challenge) { described_class.build_challenge_tx(server: server, client: user, domain: domain, **options) }
-  let(:envelope) { DigitalBits::TransactionEnvelope.from_xdr(challenge, :base64) }
+  let(:envelope) { Digitalbits::TransactionEnvelope.from_xdr(challenge, :base64) }
   let(:transaction) { envelope.tx }
 
   let(:signers) { [server, user] }
@@ -18,7 +18,7 @@ RSpec.describe DigitalBits::SEP10 do
 
     subject(:challenge) do
       xdr = described_class.build_challenge_tx(**attrs)
-      DigitalBits::TransactionEnvelope.from_xdr(xdr, :base64).tx
+      Digitalbits::TransactionEnvelope.from_xdr(xdr, :base64).tx
     end
 
     it "generates a valid SEP10 challenge" do
@@ -65,15 +65,15 @@ RSpec.describe DigitalBits::SEP10 do
     let(:attrs) { {challenge_xdr: response_xdr, server: server} }
 
     let(:extra_operation) {
-      DigitalBits::Operation.manage_data(source_account: server, name: "extra", value: "operation")
+      Digitalbits::Operation.manage_data(source_account: server, name: "extra", value: "operation")
     }
 
     let(:invalid_operation) {
-      DigitalBits::Operation.payment(source_account: server, destination: KeyPair(), amount: [:native, 20])
+      Digitalbits::Operation.payment(source_account: server, destination: KeyPair(), amount: [:native, 20])
     }
 
     let(:auth_domain_operation) {
-      DigitalBits::Operation.manage_data(source_account: server, name: "web_auth_domain", value: "wrong.example.com")
+      Digitalbits::Operation.manage_data(source_account: server, name: "web_auth_domain", value: "wrong.example.com")
     }
 
     subject(:read_challenge) {
@@ -163,14 +163,14 @@ RSpec.describe DigitalBits::SEP10 do
     end
 
     it "throws an error if challenge is expired" do
-      transaction.time_bounds = DigitalBits::TimeBounds.new(min_time: 0, max_time: 5)
+      transaction.time_bounds = Digitalbits::TimeBounds.new(min_time: 0, max_time: 5)
 
       expect { read_challenge }.to raise_invalid("has expired")
     end
 
     it "throws an error if challenge is in the future" do
       now = Time.now.to_i
-      transaction.time_bounds = DigitalBits::TimeBounds.new(min_time: now + 100, max_time: now + 500)
+      transaction.time_bounds = Digitalbits::TimeBounds.new(min_time: now + 100, max_time: now + 500)
 
       expect { read_challenge }.to raise_invalid("has expired")
     end
@@ -375,7 +375,7 @@ RSpec.describe DigitalBits::SEP10 do
   describe "#verify_tx_signed_by" do
     let(:keypair) { KeyPair() }
     let(:envelope) do
-      DigitalBits::TransactionBuilder.bump_sequence(
+      Digitalbits::TransactionBuilder.bump_sequence(
         source_account: keypair,
         bump_to: 1000,
         sequence_number: 0
@@ -398,6 +398,6 @@ RSpec.describe DigitalBits::SEP10 do
   end
 
   def raise_invalid(cause)
-    raise_error(DigitalBits::InvalidSep10ChallengeError, Regexp.compile(cause))
+    raise_error(Digitalbits::InvalidSep10ChallengeError, Regexp.compile(cause))
   end
 end
