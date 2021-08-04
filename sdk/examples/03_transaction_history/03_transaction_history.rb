@@ -1,6 +1,6 @@
 require "digitalbits-sdk"
 
-account = Digitalbits::Account.from_seed("SBXH4SEH32PENMMB66P4TY6LXUIFMRVFUMX2LJC3P2STHICBJLNQJOH5")
+account = Digitalbits::Account.from_address("GB53LT43YMZKSOUFMOVECTHFSSTXJ4NPVEC35ZU3AEYJMBJN4VYRCTPK")
 client = Digitalbits::Client.default_testnet
 
 # load the first page of transactions
