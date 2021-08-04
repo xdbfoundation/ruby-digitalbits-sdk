@@ -9,9 +9,10 @@ Install libraries:
         bundle install
 
 Explore samples code:
+## SDK 
 
-1. [Get Funded](./examples/01_get_funded)
-2. [Payment](./examples/02_payment)
-3. [Transaction History](./examples/03_transaction_history)
-4. [Setting Tust](./examples/04_setting_trust)
-5. [Fiat Payment](./examples/05_fiat_payment)
+1. [Get Funded](./sdk/examples/01_get_funded)
+2. [Payment](./sdk/examples/02_payment)
+3. [Transaction History](./sdk/examples/03_transaction_history)
+4. [Setting Tust](./sdk/examples/04_setting_trust)
+5. [Fiat Payment](./sdk/examples/05_fiat_payment)
