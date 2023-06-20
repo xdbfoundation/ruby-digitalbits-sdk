@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Error < XDR::Struct
     attribute :code, ErrorCode
     attribute :msg,  XDR::String[100]

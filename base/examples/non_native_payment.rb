@@ -28,10 +28,10 @@ def submit(key, tx)
   p response.body
 end
 
-master = Digitalbits::KeyPair.master
-destination = Digitalbits::KeyPair.master
+master = DigitalBits::KeyPair.master
+destination = DigitalBits::KeyPair.master
 
-submit master, Digitalbits::Transaction.payment({
+submit master, DigitalBits::Transaction.payment({
   account: master,
   destination: destination,
   sequence: 1,
@@ -45,14 +45,14 @@ gets # pause to get the account's sequence from the hayashi db
 destination_sequence = FILL_ME_IN
 # destination_sequence = 17179869185
 
-submit destination, Digitalbits::TransactionBuilder.change_trust({
+submit destination, DigitalBits::TransactionBuilder.change_trust({
   source_account: destination,
   sequence_number: destination_sequence,
   line: [:alphanum4, "USD\x00", master],
   limit: 1000
 })
 
-submit master, Digitalbits::TransactionBuilder.payment({
+submit master, DigitalBits::TransactionBuilder.payment({
   source_account: master,
   destination: destination,
   sequence_number: 3,

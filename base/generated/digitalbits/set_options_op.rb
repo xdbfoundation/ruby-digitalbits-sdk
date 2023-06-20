@@ -26,7 +26,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SetOptionsOp < XDR::Struct
     attribute :inflation_dest, XDR::Option[AccountID]
     attribute :clear_flags,    XDR::Option[Uint32]

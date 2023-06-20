@@ -14,7 +14,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class PeerAddress
     class Ip < XDR::Union
       switch_on IPAddrType, :type

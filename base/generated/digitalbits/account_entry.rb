@@ -35,7 +35,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AccountEntry < XDR::Struct
     include XDR::Namespace
 

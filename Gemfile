@@ -2,6 +2,8 @@ source "https://rubygems.org"
 
 gem "digitalbits-base", path: "./base"
 gem "digitalbits-sdk", path: "./sdk"
+gem "digitalbits-frontier", path: "./frontier"
+# gem "xdr", github: "astroband/ruby-xdr", branch: "main"
 
 group :test do
   gem "codecov"
@@ -15,16 +17,14 @@ group :test do
 end
 
 group :lint do
-  gem "bundler-audit"
-  gem "standard", "1.1.1", require: false
+  gem "bundler-audit", require: false
+  gem "standard", require: false
   gem "yard-junk", require: false
 end
 
 group :development do
   gem "awesome_print"
   gem "break"
-  gem "faraday"
-  gem "faraday_middleware"
   gem "gem-release", require: false
   gem "octokit"
   gem "pry"

@@ -27,10 +27,10 @@ def submit(key, tx)
   p response.body
 end
 
-master = Digitalbits::KeyPair.master
-destination = Digitalbits::KeyPair.master
+master = DigitalBits::KeyPair.master
+destination = DigitalBits::KeyPair.master
 
-submit master, Digitalbits::TransactionBuilder.payment({
+submit master, DigitalBits::TransactionBuilder.payment({
   source_account: master,
   destination: destination,
   sequence_number: 1,
@@ -44,28 +44,28 @@ gets # pause to get the account's sequence from the hayashi db
 destination_sequence = FILL_ME_IN
 # destination_sequence = 17179869185
 
-submit destination, Digitalbits::TransactionBuilder.change_trust({
+submit destination, DigitalBits::TransactionBuilder.change_trust({
   source_account: destination,
   sequence_number: destination_sequence,
   line: [:alphanum4, "USD\x00", master],
   limit: 1000
 })
 
-submit destination, Digitalbits::TransactionBuilder.change_trust({
+submit destination, DigitalBits::TransactionBuilder.change_trust({
   source_account: destination,
   sequence_number: destination_sequence + 1,
   line: [:alphanum4, "EUR\x00", master],
   limit: 1000
 })
 
-submit master, Digitalbits::TransactionBuilder.payment({
+submit master, DigitalBits::TransactionBuilder.payment({
   source_account: master,
   destination: destination,
   sequence_number: destination_sequence + 2,
   amount: [:alphanum4, "USD\x00", master, 1000]
 })
 
-submit master, Digitalbits::TransactionBuilder.manage_offer({
+submit master, DigitalBits::TransactionBuilder.manage_offer({
   source_account: destination,
   sequence_number: destination_sequence + 3,
   selling: [:alphanum4, "USD\x00", usd_gateway],

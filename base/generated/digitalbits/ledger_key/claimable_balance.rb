@@ -11,7 +11,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerKey
     class ClaimableBalance < XDR::Struct
       attribute :balance_id, ClaimableBalanceID

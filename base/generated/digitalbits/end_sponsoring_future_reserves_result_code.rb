@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class EndSponsoringFutureReservesResultCode < XDR::Enum
     member :end_sponsoring_future_reserves_success,       0
     member :end_sponsoring_future_reserves_not_sponsored, -1

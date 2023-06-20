@@ -15,7 +15,7 @@ require 'xdr'
 #           }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SCPStatement
     class Pledges
       class Confirm < XDR::Struct

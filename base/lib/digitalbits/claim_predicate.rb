@@ -2,9 +2,10 @@
 require "active_support/core_ext/integer/time"
 require "active_support/core_ext/string/conversions"
 
-module Digitalbits
+module DigitalBits
   # Represents claim predicate on DigitalBits network.
   #
+  # @see https://developers.digitalbits.io/docs/glossary/claimable-balance/
   class ClaimPredicate
     module FactoryMethods
       # Constructs an `unconditional` claim predicate.
@@ -19,7 +20,7 @@ module Digitalbits
       # Constructs a `before_relative_time` claim predicate.
       #
       # This predicate will be fulfilled if the closing time of the ledger that includes
-      # the Digitalbits::CreateClaimableBalance operation plus this relative time delta (in seconds)
+      # the DigitalBits::CreateClaimableBalance operation plus this relative time delta (in seconds)
       # is less than the current time.
       #
       # @param seconds [#to_int|#to_i] seconds since `closeTime` of the ledger in which
@@ -32,7 +33,7 @@ module Digitalbits
       # Constructs an `before_absolute_time` claim predicate.
       #
       # This predicate will be fulfilled if the closing time of the ledger that includes
-      # the Digitalbits::CreateClaimableBalance operation is less than provided timestamp.
+      # the DigitalBits::CreateClaimableBalance operation is less than provided timestamp.
       #
       # @param timestamp [#to_time|#to_int|#to_i] time value or timestamp
       #

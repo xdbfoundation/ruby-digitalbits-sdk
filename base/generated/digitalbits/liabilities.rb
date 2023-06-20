@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Liabilities < XDR::Struct
     attribute :buying,  Int64
     attribute :selling, Int64

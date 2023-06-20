@@ -18,7 +18,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TransactionResult
     class Result < XDR::Union
       switch_on TransactionResultCode, :code

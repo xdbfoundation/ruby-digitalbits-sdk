@@ -1,4 +1,4 @@
-module Digitalbits
+module DigitalBits
   module Util
     require "base32"
     require "digest/crc16_xmodem"
@@ -8,7 +8,9 @@ module Digitalbits
         account_id: [6 << 3].pack("C"), # Base32-encodes to 'G...'
         seed: [18 << 3].pack("C"), # Base32-encodes to 'S...'
         pre_auth_tx: [19 << 3].pack("C"), # Base32-encodes to 'T...'
-        hash_x: [23 << 3].pack("C") # Base32-encodes to 'X...'
+        hash_x: [23 << 3].pack("C"), # Base32-encodes to 'X...'
+        muxed: [12 << 3].pack("C"), # Base32-encodes to 'M...'
+        signed_payload: [15 << 3].pack("C") # Base32-encodes to 'P...'
       }
 
       def self.check_encode(version, byte_str)
@@ -21,25 +23,45 @@ module Digitalbits
         Base32.encode(payload + check).tr("=", "")
       end
 
-      # Converts an Digitalbits::MuxedAccount to its string representation, forcing the ed25519 representation.
-      # @param muxed_account [Digitalbits::MuxedAccount] account
+      # Converts an DigitalBits::MuxedAccount to its string representation, forcing the ed25519 representation.
+      # @param muxed_account [DigitalBits::MuxedAccount] account
       # @return [String] "G.."-like address
       def self.encode_muxed_account(muxed_account)
-        ed25519 = if muxed_account.switch == Digitalbits::CryptoKeyType.key_type_ed25519
-          muxed_account.ed25519!
+        if muxed_account.ed25519
+          check_encode(:account_id, muxed_account.ed25519)
         else
-          muxed_account.med25519!.ed25519
+          check_encode(:muxed, muxed_account.med25519!.ed25519 + [muxed_account.med25519!.id].pack("Q>"))
         end
-
-        check_encode(:account_id, ed25519)
       end
 
-      # Returns a Digitalbits::MuxedAccount, forcing the ed25519 discriminant
+      # Returns a DigitalBits::MuxedAccount, forcing the ed25519 discriminant
       #
       # @param strkey [String] address string to decode
-      # @return [Digitalbits::MuxedAccount] MuxedAccount with ed25519 discriminant
+      # @return [DigitalBits::MuxedAccount] MuxedAccount with ed25519 discriminant
       def self.decode_muxed_account(strkey)
-        Digitalbits::MuxedAccount.new(:key_type_ed25519, check_decode(:account_id, strkey))
+        case strkey
+        when /^G[0-9A-Z]{55}$/
+          ed25519 = check_decode(:account_id, strkey)
+          DigitalBits::MuxedAccount.ed25519(ed25519)
+        when /^M[0-9A-Z]{68}$/
+          payload = check_decode(:muxed, strkey)
+          DigitalBits::MuxedAccount.med25519(ed25519: payload[0, 32], id: payload[32, 8].unpack1("Q>"))
+        else
+          raise "cannot decode MuxedAccount from #{strkey}"
+        end
+      end
+
+      # @param payload [DigitalBits::SignerKey::Ed25519SignedPayload]
+      # @return [String] "P.."-like address
+      def self.encode_signed_payload(payload)
+        check_encode(:signed_payload, payload.to_xdr)
+      end
+
+      # @param strkey [String] address string to decode
+      # @return [DigitalBits::SignerKey::Ed25519SignedPayload]
+      def self.decode_signed_payload(strkey)
+        raw = check_decode(:signed_payload, strkey)
+        DigitalBits::SignerKey::Ed25519SignedPayload.from_xdr(raw, :raw)
       end
 
       def self.check_decode(expected_version, str)

@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class BumpSequenceResultCode < XDR::Enum
     member :bump_sequence_success, 0
     member :bump_sequence_bad_seq, -1

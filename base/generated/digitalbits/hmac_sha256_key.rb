@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class HmacSha256Key < XDR::Struct
     attribute :key, XDR::Opaque[32]
   end

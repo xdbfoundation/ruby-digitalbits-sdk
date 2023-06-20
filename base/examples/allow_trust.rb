@@ -27,10 +27,10 @@ rescue RestClient::ExceptionWithResponse => e
 end
 
 def allow_trust(address, issuer_keypair)
-  account = Digitalbits::KeyPair.from_address(address)
+  account = DigitalBits::KeyPair.from_address(address)
   current_sequence = sequence_from_account(issuer_keypair)
 
-  tx = Digitalbits::TransactionBuilder.allow_trust({
+  tx = DigitalBits::TransactionBuilder.allow_trust({
     trustor: account,
     source_account: issuer_keypair,
     asset: [:alphanum4, HUG_ASSET_CODE, issuer_keypair],
@@ -44,5 +44,5 @@ end
 
 # Usage:
 # issuer_keypair must be a keypair from an anchor with both the public and
-# private key i.e type Digitalbits::KeyPair
+# private key i.e type DigitalBits::KeyPair
 allow_trust("GCHOWITWOUNRUXGJWYUB4IMICZKROLHDRC2TJH5W324LBJVM4JUVXOZL", issuer_keypair)

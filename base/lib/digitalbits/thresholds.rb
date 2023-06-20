@@ -1,4 +1,4 @@
-module Digitalbits
+module DigitalBits
   class << Thresholds
     COMPONENTS = [:master_weight, :low, :medium, :high]
     VALID_RANGE = 0..255

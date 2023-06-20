@@ -1,4 +1,4 @@
-module Digitalbits
+module DigitalBits
   class MuxedAccount
     def to_keypair
       case arm

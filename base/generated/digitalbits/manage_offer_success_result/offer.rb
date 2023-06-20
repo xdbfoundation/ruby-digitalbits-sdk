@@ -15,7 +15,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ManageOfferSuccessResult
     class Offer < XDR::Union
       switch_on ManageOfferEffect, :effect

@@ -23,7 +23,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ClaimPredicate < XDR::Union
     switch_on ClaimPredicateType, :type
 

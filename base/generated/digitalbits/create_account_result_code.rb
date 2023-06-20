@@ -19,7 +19,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class CreateAccountResultCode < XDR::Enum
     member :create_account_success,       0
     member :create_account_malformed,     -1

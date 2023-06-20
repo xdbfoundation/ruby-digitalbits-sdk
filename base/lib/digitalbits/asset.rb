@@ -1,4 +1,4 @@
-module Digitalbits
+module DigitalBits
   class Asset
     TYPES = %i[native alphanum4 alphanum12]
 
@@ -9,7 +9,7 @@ module Digitalbits
     # @param code   [String] asset code
     # @param issuer [#to_keypair] asset issuer
     #
-    # @return [Digitalbits::Asset::AlphaNum4] asset4 representation
+    # @return [DigitalBits::Asset::AlphaNum4] asset4 representation
     def self.alphanum4(code, issuer)
       issuer = issuer.to_keypair if issuer.respond_to?(:to_keypair)
       raise ArgumentError, "Bad :issuer" unless issuer.is_a?(KeyPair)
@@ -21,7 +21,7 @@ module Digitalbits
     # @param code   [String] asset code
     # @param issuer [#to_keypair] asset issuer
     #
-    # @return [Digitalbits::Asset::AlphaNum4] asset4 representation
+    # @return [DigitalBits::Asset::AlphaNum4] asset4 representation
     def self.alphanum12(code, issuer)
       issuer = issuer.to_keypair if issuer.respond_to?(:to_keypair)
       raise ArgumentError, "Bad :issuer" unless issuer.is_a?(KeyPair)
@@ -30,24 +30,32 @@ module Digitalbits
       new(:asset_type_credit_alphanum12, an)
     end
 
+    def to_change_trust_asset
+      ChangeTrustAsset.new(switch, value)
+    end
+
+    def to_trust_line_asset
+      TrustLineAsset.new(switch, value)
+    end
+
     def to_s
       case switch
       when AssetType.asset_type_native
         "native"
       when AssetType.asset_type_credit_alphanum4
         anum = alpha_num4!
-        issuer_address = Digitalbits::Convert.pk_to_address(anum.issuer)
+        issuer_address = DigitalBits::Convert.pk_to_address(anum.issuer)
         "#{anum.asset_code}/#{issuer_address}"
       when AssetType.asset_type_credit_alphanum12
         anum = alpha_num12!
-        issuer_address = Digitalbits::Convert.pk_to_address(anum.issuer)
+        issuer_address = DigitalBits::Convert.pk_to_address(anum.issuer)
         "#{anum.asset_code}/#{issuer_address}"
       end
     end
 
     def inspect
       # label = switch.to_s
-      "#<Digitalbits::Asset #{self}>"
+      "#<DigitalBits::Asset #{self}>"
     end
 
     def code

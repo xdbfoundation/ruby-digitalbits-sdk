@@ -52,12 +52,22 @@ require 'xdr'
 #           void;
 #       case REVOKE_SPONSORSHIP:
 #           RevokeSponsorshipOp revokeSponsorshipOp;
+#       case CLAWBACK:
+#           ClawbackOp clawbackOp;
+#       case CLAWBACK_CLAIMABLE_BALANCE:
+#           ClawbackClaimableBalanceOp clawbackClaimableBalanceOp;
+#       case SET_TRUST_LINE_FLAGS:
+#           SetTrustLineFlagsOp setTrustLineFlagsOp;
+#       case LIQUIDITY_POOL_DEPOSIT:
+#           LiquidityPoolDepositOp liquidityPoolDepositOp;
+#       case LIQUIDITY_POOL_WITHDRAW:
+#           LiquidityPoolWithdrawOp liquidityPoolWithdrawOp;
 #       }
 #       body;
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Operation < XDR::Struct
     include XDR::Namespace
 

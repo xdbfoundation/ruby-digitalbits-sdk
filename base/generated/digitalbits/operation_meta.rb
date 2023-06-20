@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class OperationMeta < XDR::Struct
     attribute :changes, LedgerEntryChanges
   end

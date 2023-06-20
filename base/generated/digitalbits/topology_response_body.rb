@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TopologyResponseBody < XDR::Struct
     attribute :inbound_peers,             PeerStatList
     attribute :outbound_peers,            PeerStatList

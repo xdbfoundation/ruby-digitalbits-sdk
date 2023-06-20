@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ManageOfferEffect < XDR::Enum
     member :manage_offer_created, 0
     member :manage_offer_updated, 1

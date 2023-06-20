@@ -45,7 +45,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SCPStatement < XDR::Struct
     include XDR::Namespace
 

@@ -1,10 +1,10 @@
-RSpec.describe Digitalbits::KeyPair do
+RSpec.describe DigitalBits::KeyPair do
   describe ".from_seed" do
-    subject { Digitalbits::KeyPair.from_seed(seed) }
+    subject { DigitalBits::KeyPair.from_seed(seed) }
 
     context "when provided a strkey encoded seed" do
       let(:seed) { "SBDA4J4PYZJEXWDTHFZBIGFVF2745BTKDKADWDQF72QXP55BP6XOV3B6" }
-      it { should be_a(Digitalbits::KeyPair) }
+      it { should be_a(DigitalBits::KeyPair) }
     end
 
     context "provided value is not strkey encoded" do
@@ -14,17 +14,17 @@ RSpec.describe Digitalbits::KeyPair do
 
     context "provided value is not strkey encoded as a seed" do
       let(:raw_seed) { "allmylifemyhearthasbeensearching" }
-      let(:seed) { Digitalbits::Util::StrKey.check_encode(:account_id, raw_seed) }
+      let(:seed) { DigitalBits::Util::StrKey.check_encode(:account_id, raw_seed) }
       it { expect { subject }.to raise_error(ArgumentError) }
     end
   end
 
   describe ".from_raw_seed" do
-    subject { Digitalbits::KeyPair.from_raw_seed(raw_seed) }
+    subject { DigitalBits::KeyPair.from_raw_seed(raw_seed) }
 
     context "when the provided value is a 32-byte string" do
       let(:raw_seed) { "allmylifemyhearthasbeensearching" }
-      it { should be_a(Digitalbits::KeyPair) }
+      it { should be_a(DigitalBits::KeyPair) }
     end
 
     context "when the provided value is < 32-byte string" do
@@ -44,11 +44,11 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe ".from_public_key" do
-    subject { Digitalbits::KeyPair.from_public_key(key) }
+    subject { DigitalBits::KeyPair.from_public_key(key) }
 
     context "when the provided value is a 32-byte string" do
       let(:key) { "\xFF" * 32 }
-      it { should be_a(Digitalbits::KeyPair) }
+      it { should be_a(DigitalBits::KeyPair) }
     end
 
     context "when the provided value is < 32-byte string" do
@@ -68,11 +68,11 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe ".from_address" do
-    subject { Digitalbits::KeyPair.from_address(address) }
+    subject { DigitalBits::KeyPair.from_address(address) }
 
     context "when provided a strkey encoded account_id" do
       let(:address) { "GBRAINV4XDXEINVTNN53GOIGTN4B3BK65N6Q2ZBOMXHGHT347OQVNYZQ" }
-      it { should be_a(Digitalbits::KeyPair) }
+      it { should be_a(DigitalBits::KeyPair) }
     end
 
     context "provided value is not strkey encoded" do
@@ -82,30 +82,30 @@ RSpec.describe Digitalbits::KeyPair do
 
     context "provided value is not strkey encoded as an account_id" do
       let(:public_key) { "\xFF" * 32 }
-      let(:address) { Digitalbits::Util::StrKey.check_encode(:seed, public_key) }
+      let(:address) { DigitalBits::Util::StrKey.check_encode(:seed, public_key) }
       it { expect { subject }.to raise_error(ArgumentError) }
     end
   end
 
   describe ".random" do
-    subject { Digitalbits::KeyPair.random }
+    subject { DigitalBits::KeyPair.random }
 
     it "returns a new KeyPair every time" do
-      other = Digitalbits::KeyPair.random
+      other = DigitalBits::KeyPair.random
       expect(subject.raw_seed == other.raw_seed).to eq(false)
     end
   end
 
   describe ".master" do
-    subject { Digitalbits::KeyPair.master }
+    subject { DigitalBits::KeyPair.master }
 
     it "returns a keypair whose raw_seed is the current_network_id" do
-      expect(subject.raw_seed).to eql(Digitalbits.current_network_id)
+      expect(subject.raw_seed).to eql(DigitalBits.current_network_id)
     end
   end
 
   describe "#raw_public_key" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.raw_public_key }
 
     it { should be_a(String) }
@@ -113,17 +113,17 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#public_key" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.public_key }
 
-    it { should be_a(Digitalbits::PublicKey) }
+    it { should be_a(DigitalBits::PublicKey) }
   end
 
   describe "#account_id" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.account_id }
 
-    it { should be_a(Digitalbits::AccountID) }
+    it { should be_a(DigitalBits::AccountID) }
 
     it "contains the public key" do
       expect(subject.ed25519!).to eql(key_pair.raw_public_key)
@@ -131,10 +131,10 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#muxed_account" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.muxed_account }
 
-    it { should be_a(Digitalbits::MuxedAccount) }
+    it { should be_a(DigitalBits::MuxedAccount) }
 
     it "contains the public key" do
       expect(subject.ed25519!).to eql(key_pair.raw_public_key)
@@ -142,10 +142,10 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#signer_key" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.signer_key }
 
-    it { should be_a(Digitalbits::SignerKey) }
+    it { should be_a(DigitalBits::SignerKey) }
 
     it "contains the public key" do
       expect(subject.ed25519!).to eql(key_pair.raw_public_key)
@@ -153,7 +153,7 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#raw_seed" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.raw_seed }
 
     it { should be_a(String) }
@@ -161,7 +161,7 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#signature_hint" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.signature_hint }
 
     it { should be_a(String) }
@@ -174,13 +174,13 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#address" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.address }
     it { should be_strkey(:account_id) }
   end
 
   describe "#seed" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     subject { key_pair.seed }
     it { should be_strkey(:seed) }
   end
@@ -190,13 +190,13 @@ RSpec.describe Digitalbits::KeyPair do
     subject { key_pair.sign(message) }
 
     context "when the key_pair has no private key" do
-      let(:key_pair) { Digitalbits::KeyPair.from_public_key("\x00" * 32) }
+      let(:key_pair) { DigitalBits::KeyPair.from_public_key("\x00" * 32) }
 
       it { expect { subject }.to raise_error("no private key, signing is not available") }
     end
 
     context "when the key_pair has both public/private keys" do
-      let(:key_pair) { Digitalbits::KeyPair.from_raw_seed("\x00" * 32) }
+      let(:key_pair) { DigitalBits::KeyPair.from_raw_seed("\x00" * 32) }
 
       it { should have_length(64) }
 
@@ -213,7 +213,7 @@ RSpec.describe Digitalbits::KeyPair do
   end
 
   describe "#verify" do
-    let(:key_pair) { Digitalbits::KeyPair.random }
+    let(:key_pair) { DigitalBits::KeyPair.random }
     let(:message) { "hello" }
     subject { key_pair.verify(signature, message) }
 
@@ -233,7 +233,7 @@ RSpec.describe Digitalbits::KeyPair do
     end
 
     context "when the signature is from a different key" do
-      let(:signature) { Digitalbits::KeyPair.random.sign(message) }
+      let(:signature) { DigitalBits::KeyPair.random.sign(message) }
       it { should be_falsey }
     end
   end
@@ -242,12 +242,12 @@ RSpec.describe Digitalbits::KeyPair do
     subject { key_pair.sign? }
 
     context "when the key_pair has no private key" do
-      let(:key_pair) { Digitalbits::KeyPair.from_public_key("\x00" * 32) }
+      let(:key_pair) { DigitalBits::KeyPair.from_public_key("\x00" * 32) }
       it { should eq(false) }
     end
 
     context "when the key_pair has both public/private keys" do
-      let(:key_pair) { Digitalbits::KeyPair.from_raw_seed("\x00" * 32) }
+      let(:key_pair) { DigitalBits::KeyPair.from_raw_seed("\x00" * 32) }
       it { should eq(true) }
     end
   end

@@ -29,11 +29,13 @@ require 'xdr'
 #       HELLO = 13,
 #   
 #       SURVEY_REQUEST = 14,
-#       SURVEY_RESPONSE = 15
+#       SURVEY_RESPONSE = 15,
+#   
+#       SEND_MORE = 16
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class MessageType < XDR::Enum
     member :error_msg,         0
     member :auth,              2
@@ -50,6 +52,7 @@ module Digitalbits
     member :hello,             13
     member :survey_request,    14
     member :survey_response,   15
+    member :send_more,         16
 
     seal
   end

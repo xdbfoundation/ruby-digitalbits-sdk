@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class BumpSequenceResult < XDR::Union
     switch_on BumpSequenceResultCode, :code
 

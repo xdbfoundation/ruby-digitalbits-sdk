@@ -23,13 +23,13 @@ namespace :xdr do
       namespace: "digitalbits-base-generated",
       language: :ruby
     )
-    IO.write("Digitalbits.x", compilation.source)
+    IO.write("DigitalBits.x", compilation.source)
     compilation.compile
   end
 
   rule ".x", [:ref] => ["xdr"] do |t, args|
     args.with_defaults(ref: :master)
-    core_file = github_client.contents("xdbfoundation/DigitalBits", path: "src/#{t.name}", ref: args.ref)
+    core_file = github_client.contents("digitalbits/digitalbits-core", path: "src/#{t.name}", ref: args.ref)
     IO.write(t.name, core_file.rels[:download].get.data)
   end
 

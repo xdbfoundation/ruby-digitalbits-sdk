@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SetOptionsResult < XDR::Union
     switch_on SetOptionsResultCode, :code
 

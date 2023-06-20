@@ -1,5 +1,5 @@
-# DigitalBIts SDK for Ruby: Frontier Integration and Higher Level Abstractions
-[
+# DigitalBits SDK for Ruby: Frontier Integration and Higher Level Abstractions
+
 This library helps you to integrate your application into the [DigitalBits network](http://digitalbits.io).
 
 ## Installation
@@ -25,21 +25,21 @@ A simple payment from the root account to some random accounts
 ```ruby
 require 'digitalbits-sdk'
 
-account   = Digitalbits::Account.master
-client    = Digitalbits::Client.default_testnet()
-recipient = Digitalbits::Account.random
+account   = DigitalBits::Account.master
+client    = DigitalBits::Client.default_testnet()
+recipient = DigitalBits::Account.random
 
 client.send_payment({
   from:   account,
   to:     recipient,
-  amount: Digitalbits::Amount.new(100_000_000)
+  amount: DigitalBits::Amount.new(100_000_000)
 })
 ```
 
-Be sure to set the network when submitting to the public network (more information in [digitalbits-base](https://www.github.com/xdbfoundation/ruby-digitalbits-sdk/tree/master/base)):
+Be sure to set the network when submitting to the public network (more information in [digitalbits-base](https://www.github.com/xdbfoundation/ruby-digitalbits-base)):
 
 ```ruby
-Digitalbits.default_network = Digitalbits::Networks::PUBLIC
+DigitalBits.default_network = DigitalBits::Networks::PUBLIC
 ```
 
 ## Development
@@ -50,11 +50,3 @@ Digitalbits.default_network = Digitalbits::Networks::PUBLIC
 - Copy `spec/config.yml.sample` to `spec/config.yml`
 - Replace anything in `spec/config.yml` especially if you will re-record specs
 - `bundle exec rspec spec`
-
-## Contributing
-
-1. Fork it ( https://github.com/xdbfoundation/ruby-digitalbits-sdk/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request

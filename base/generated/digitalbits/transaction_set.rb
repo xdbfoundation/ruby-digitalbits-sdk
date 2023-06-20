@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TransactionSet < XDR::Struct
     attribute :previous_ledger_hash, Hash
     attribute :txs,                  XDR::VarArray[TransactionEnvelope]

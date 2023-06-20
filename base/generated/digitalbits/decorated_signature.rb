@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class DecoratedSignature < XDR::Struct
     attribute :hint,      SignatureHint
     attribute :signature, Signature

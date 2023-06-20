@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class PublicKeyType < XDR::Enum
     member :public_key_type_ed25519, 0
 

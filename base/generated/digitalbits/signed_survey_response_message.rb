@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SignedSurveyResponseMessage < XDR::Struct
     attribute :response_signature, Signature
     attribute :response,           SurveyResponseMessage

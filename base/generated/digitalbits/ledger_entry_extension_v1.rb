@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerEntryExtensionV1 < XDR::Struct
     include XDR::Namespace
 

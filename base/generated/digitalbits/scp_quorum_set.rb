@@ -8,15 +8,15 @@ require 'xdr'
 #   struct SCPQuorumSet
 #   {
 #       uint32 threshold;
-#       PublicKey validators<>;
+#       NodeID validators<>;
 #       SCPQuorumSet innerSets<>;
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SCPQuorumSet < XDR::Struct
     attribute :threshold,  Uint32
-    attribute :validators, XDR::VarArray[PublicKey]
+    attribute :validators, XDR::VarArray[NodeID]
     attribute :inner_sets, XDR::VarArray[SCPQuorumSet]
   end
 end

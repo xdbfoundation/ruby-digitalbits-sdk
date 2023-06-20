@@ -17,7 +17,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AuthenticatedMessage < XDR::Union
     include XDR::Namespace
 

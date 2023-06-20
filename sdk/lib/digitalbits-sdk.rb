@@ -1,21 +1,12 @@
 require "digitalbits-base"
+require "digitalbits-frontier"
 
-module Digitalbits
+module DigitalBits
   module SDK
-    VERSION = ::Digitalbits::VERSION
+    VERSION = ::DigitalBits::VERSION
   end
+  Client = Frontier::Client
 
-  autoload :Account
-  autoload :Amount
-  autoload :Client
+  autoload :Federation
   autoload :SEP10
-
-  module Frontier
-    extend ActiveSupport::Autoload
-
-    autoload :Problem
-    autoload :Result
-  end
-
-  autoload :TransactionPage
 end

@@ -17,7 +17,7 @@ require 'xdr'
 #       struct
 #       {
 #           AccountID accountID;
-#           Asset asset;
+#           TrustLineAsset asset;
 #       } trustLine;
 #   
 #   case OFFER:
@@ -39,10 +39,16 @@ require 'xdr'
 #       {
 #           ClaimableBalanceID balanceID;
 #       } claimableBalance;
+#   
+#   case LIQUIDITY_POOL:
+#       struct
+#       {
+#           PoolID liquidityPoolID;
+#       } liquidityPool;
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerKey < XDR::Union
     include XDR::Namespace
 
@@ -51,6 +57,7 @@ module Digitalbits
     autoload :Offer
     autoload :Data
     autoload :ClaimableBalance
+    autoload :LiquidityPool
 
     switch_on LedgerEntryType, :type
 
@@ -59,11 +66,13 @@ module Digitalbits
     switch :offer,             :offer
     switch :data,              :data
     switch :claimable_balance, :claimable_balance
+    switch :liquidity_pool,    :liquidity_pool
 
     attribute :account,           Account
     attribute :trust_line,        TrustLine
     attribute :offer,             Offer
     attribute :data,              Data
     attribute :claimable_balance, ClaimableBalance
+    attribute :liquidity_pool,    LiquidityPool
   end
 end

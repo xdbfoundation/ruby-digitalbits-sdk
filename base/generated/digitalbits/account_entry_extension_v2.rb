@@ -15,12 +15,14 @@ require 'xdr'
 #       {
 #       case 0:
 #           void;
+#       case 3:
+#           AccountEntryExtensionV3 v3;
 #       }
 #       ext;
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AccountEntryExtensionV2 < XDR::Struct
     include XDR::Namespace
 

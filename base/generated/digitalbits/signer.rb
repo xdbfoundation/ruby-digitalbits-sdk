@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Signer < XDR::Struct
     attribute :key,    SignerKey
     attribute :weight, Uint32

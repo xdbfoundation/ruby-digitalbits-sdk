@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerEntryChangeType < XDR::Enum
     member :ledger_entry_created, 0
     member :ledger_entry_updated, 1

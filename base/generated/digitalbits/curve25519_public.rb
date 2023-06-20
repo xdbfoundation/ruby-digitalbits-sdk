@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Curve25519Public < XDR::Struct
     attribute :key, XDR::Opaque[32]
   end

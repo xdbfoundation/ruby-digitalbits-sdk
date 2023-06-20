@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SCPHistoryEntryV0 < XDR::Struct
     attribute :quorum_sets,     XDR::VarArray[SCPQuorumSet]
     attribute :ledger_messages, LedgerSCPMessages

@@ -13,12 +13,14 @@ require 'xdr'
 #               {
 #               case 0:
 #                   void;
+#               case 2:
+#                   TrustLineEntryExtensionV2 v2;
 #               }
 #               ext;
 #           }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TrustLineEntry
     class Ext
       class V1 < XDR::Struct

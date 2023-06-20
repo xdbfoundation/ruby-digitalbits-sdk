@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class InflationResultCode < XDR::Enum
     member :inflation_success,  0
     member :inflation_not_time, -1

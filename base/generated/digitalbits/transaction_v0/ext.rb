@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TransactionV0
     class Ext < XDR::Union
       switch_on XDR::Int, :v
