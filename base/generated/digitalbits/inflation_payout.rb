@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class InflationPayout < XDR::Struct
     attribute :destination, AccountID
     attribute :amount,      Int64

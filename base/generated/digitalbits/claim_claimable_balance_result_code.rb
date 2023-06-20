@@ -17,7 +17,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ClaimClaimableBalanceResultCode < XDR::Enum
     member :claim_claimable_balance_success,        0
     member :claim_claimable_balance_does_not_exist, -1

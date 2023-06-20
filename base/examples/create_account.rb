@@ -9,10 +9,10 @@ server = Faraday.new(url: "http://localhost:39132") { |conn|
   conn.adapter Faraday.default_adapter
 }
 
-master = Digitalbits::KeyPair.master
-destination = Digitalbits::KeyPair.random
+master = DigitalBits::KeyPair.master
+destination = DigitalBits::KeyPair.random
 
-tx = Digitalbits::TransactionBuilder.create_account(
+tx = DigitalBits::TransactionBuilder.create_account(
   source_account: master,
   sequence_number: 1,
   destination: destination,

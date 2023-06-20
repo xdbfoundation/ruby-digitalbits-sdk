@@ -1,8 +1,12 @@
-RSpec.describe Digitalbits::Util::StrKey do
-  subject { Digitalbits::Util::StrKey }
+RSpec.describe DigitalBits::Util::StrKey do
+  subject { DigitalBits::Util::StrKey }
+
+  def encode(version, bytes)
+    described_class.check_encode(version, bytes)
+  end
 
   def decode(version, bytes)
-    subject.check_decode(version, bytes)
+    described_class.check_decode(version, bytes)
   end
 
   describe "#check_decode" do
@@ -40,57 +44,107 @@ RSpec.describe Digitalbits::Util::StrKey do
     it "raises an ArgumentError when an invalid version is provided" do
       expect { encode :floob, "\x39" }.to raise_error(ArgumentError)
     end
-
-    def encode(version, bytes)
-      subject.check_encode(version, bytes)
-    end
   end
 
   describe "#encode_muxed_account" do
-    context "when ed25519 account is given" do
-      let(:ed25519) do
-        decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
-      end
-      let(:muxed_account) { Digitalbits::MuxedAccount.new(:key_type_ed25519, ed25519) }
+    let(:ed25519) do
+      decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
+    end
 
-      it "encodes muxed account as ed25519" do
+    context "when ed25519 account is given" do
+      let(:muxed_account) { DigitalBits::MuxedAccount.ed25519(ed25519) }
+
+      it "encodes muxed account as G... address" do
         strkey = subject.encode_muxed_account(muxed_account)
         expect(strkey).to eq("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
       end
     end
 
     context "when med25519 account is given" do
-      let(:med25519) do
-        Digitalbits::MuxedAccount::Med25519.new(
-          id: 0,
-          ed25519: decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
-        )
-      end
+      let(:muxed_account) { DigitalBits::MuxedAccount.med25519(ed25519: ed25519, id: 0) }
 
-      let(:muxed_account) { Digitalbits::MuxedAccount.new(:key_type_muxed_ed25519, med25519) }
-
-      it "encodes muxed account as ed25519" do
+      it "encodes muxed account as M... address" do
         strkey = subject.encode_muxed_account(muxed_account)
-        expect(strkey).to eq("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
+        expect(strkey).to eq("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ")
       end
     end
   end
 
   describe "#decode_muxed_account" do
-    let(:med25519) do
-      Digitalbits::MuxedAccount::Med25519.new(
-        id: 0,
-        ed25519: decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
-      )
+    let(:address) { "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ" }
+    let(:raw_key) { decode(:account_id, address) }
+
+    subject(:decoded) { described_class.decode_muxed_account(strkey) }
+
+    context "with M... address" do
+      let(:strkey) { "MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAAAAAAAACJUQ" }
+
+      it { is_expected.to be_a(DigitalBits::MuxedAccount) }
+      its(:arm) { is_expected.to eq(:med25519) }
+      its("med25519.ed25519") { is_expected.to eq(raw_key) }
+      its("med25519.id") { is_expected.to eq(0) }
     end
 
-    it "decodes ed25519 correctly" do
-      raw_ed25519 = decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
-      expected = Digitalbits::MuxedAccount.new(:key_type_ed25519, raw_ed25519)
+    context "with G... address" do
+      let(:strkey) { "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ" }
 
-      strkey = "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ"
+      it { is_expected.to be_a(DigitalBits::MuxedAccount) }
+      its(:arm) { is_expected.to eq(:ed25519) }
+      its(:ed25519) { is_expected.to eq(raw_key) }
+    end
+  end
 
-      expect(subject.decode_muxed_account(strkey)).to eq(expected)
+  describe "#decode_signed_payload" do
+    subject(:decoded) { described_class.decode_signed_payload(strkey) }
+
+    let(:address) { "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ" }
+    let(:raw_key) { decode(:account_id, address) }
+
+    context "with valid 32-byte payload" do
+      let(:strkey) { "PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAQACAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUPB6IBZGM" }
+      let(:hex_payload) { "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20" }
+
+      it { is_expected.to be_a(DigitalBits::SignerKey::Ed25519SignedPayload) }
+      its(:payload) { is_expected.to eq([hex_payload].pack("H*")) }
+      its(:ed25519) { is_expected.to eq(raw_key) }
+    end
+
+    context "with valid 29-byte payload" do
+      let(:strkey) { "PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAOQCAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUAAAAFGBU" }
+      let(:hex_payload) { "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d" }
+
+      it { is_expected.to be_a(DigitalBits::SignerKey::Ed25519SignedPayload) }
+      its(:payload) { is_expected.to eq([hex_payload].pack("H*")) }
+      its(:ed25519) { is_expected.to eq(raw_key) }
+    end
+  end
+
+  describe "#encode_signed_payload" do
+    let(:ed25519) do
+      decode(:account_id, "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ")
+    end
+    let(:payload) { DigitalBits::SignerKey::Ed25519SignedPayload.new(ed25519: ed25519, payload: raw_payload) }
+
+    context "when 32-byte payload is given" do
+      let(:raw_payload) do
+        ["0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"].pack("H*")
+      end
+
+      it "encodes payload as P... address" do
+        strkey = subject.encode_signed_payload(payload)
+        expect(strkey).to eq("PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAQACAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUPB6IBZGM")
+      end
+    end
+
+    context "when 29-byte payload is given" do
+      let(:raw_payload) do
+        ["0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d"].pack("H*")
+      end
+
+      it "encodes payload as P... address" do
+        strkey = subject.encode_signed_payload(payload)
+        expect(strkey).to eq("PA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJUAAAAAOQCAQDAQCQMBYIBEFAWDANBYHRAEISCMKBKFQXDAMRUGY4DUAAAAFGBU")
+      end
     end
   end
 end

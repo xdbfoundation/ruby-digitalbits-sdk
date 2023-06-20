@@ -35,7 +35,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class PathPaymentStrictReceiveResultCode < XDR::Enum
     member :path_payment_strict_receive_success,            0
     member :path_payment_strict_receive_malformed,          -1

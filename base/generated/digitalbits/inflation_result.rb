@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class InflationResult < XDR::Union
     switch_on InflationResultCode, :code
 

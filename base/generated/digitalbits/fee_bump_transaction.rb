@@ -24,7 +24,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class FeeBumpTransaction < XDR::Struct
     include XDR::Namespace
 

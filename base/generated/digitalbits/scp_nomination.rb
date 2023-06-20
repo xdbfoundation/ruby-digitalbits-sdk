@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SCPNomination < XDR::Struct
     attribute :quorum_set_hash, Hash
     attribute :votes,           XDR::VarArray[Value]

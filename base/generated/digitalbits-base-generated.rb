@@ -3,7 +3,7 @@
 
 require 'xdr'
 
-module Digitalbits
+module DigitalBits
   include XDR::Namespace
 
   Hash = XDR::Opaque[32]
@@ -12,6 +12,7 @@ module Digitalbits
   Int32 = XDR::Int
   Uint64 = XDR::UnsignedHyper
   Int64 = XDR::Hyper
+  autoload :ExtensionPoint
   autoload :CryptoKeyType
   autoload :PublicKeyType
   autoload :SignerKeyType
@@ -25,7 +26,7 @@ module Digitalbits
   autoload :HmacSha256Key
   autoload :HmacSha256Mac
 end
-module Digitalbits
+module DigitalBits
   include XDR::Namespace
 
   AccountID = PublicKey
@@ -34,10 +35,15 @@ module Digitalbits
   String64 = XDR::String[64]
   SequenceNumber = Int64
   TimePoint = Uint64
+  Duration = Uint64
   DataValue = XDR::VarOpaque[64]
+  PoolID = Hash
   AssetCode4 = XDR::Opaque[4]
   AssetCode12 = XDR::Opaque[12]
   autoload :AssetType
+  autoload :AssetCode
+  autoload :AlphaNum4
+  autoload :AlphaNum12
   autoload :Asset
   autoload :Price
   autoload :Liabilities
@@ -46,14 +52,20 @@ module Digitalbits
   autoload :Signer
   autoload :AccountFlags
   MASK_ACCOUNT_FLAGS = 0x7
+  MASK_ACCOUNT_FLAGS_V17 = 0xF
   MAX_SIGNERS = 20
   SponsorshipDescriptor = XDR::Option[AccountID]
+  autoload :AccountEntryExtensionV3
   autoload :AccountEntryExtensionV2
   autoload :AccountEntryExtensionV1
   autoload :AccountEntry
   autoload :TrustLineFlags
   MASK_TRUSTLINE_FLAGS = 1
   MASK_TRUSTLINE_FLAGS_V13 = 3
+  MASK_TRUSTLINE_FLAGS_V17 = 7
+  autoload :LiquidityPoolType
+  autoload :TrustLineAsset
+  autoload :TrustLineEntryExtensionV2
   autoload :TrustLineEntry
   autoload :OfferEntryFlags
   MASK_OFFERENTRY_FLAGS = 1
@@ -65,15 +77,21 @@ module Digitalbits
   autoload :Claimant
   autoload :ClaimableBalanceIDType
   autoload :ClaimableBalanceID
+  autoload :ClaimableBalanceFlags
+  MASK_CLAIMABLE_BALANCE_FLAGS = 0x1
+  autoload :ClaimableBalanceEntryExtensionV1
   autoload :ClaimableBalanceEntry
+  autoload :LiquidityPoolConstantProductParameters
+  autoload :LiquidityPoolEntry
   autoload :LedgerEntryExtensionV1
   autoload :LedgerEntry
   autoload :LedgerKey
   autoload :EnvelopeType
 end
-module Digitalbits
+module DigitalBits
   include XDR::Namespace
 
+  autoload :LiquidityPoolParameters
   autoload :MuxedAccount
   autoload :DecoratedSignature
   autoload :OperationType
@@ -85,6 +103,7 @@ module Digitalbits
   autoload :ManageBuyOfferOp
   autoload :CreatePassiveSellOfferOp
   autoload :SetOptionsOp
+  autoload :ChangeTrustAsset
   autoload :ChangeTrustOp
   autoload :AllowTrustOp
   autoload :ManageDataOp
@@ -94,11 +113,21 @@ module Digitalbits
   autoload :BeginSponsoringFutureReservesOp
   autoload :RevokeSponsorshipType
   autoload :RevokeSponsorshipOp
+  autoload :ClawbackOp
+  autoload :ClawbackClaimableBalanceOp
+  autoload :SetTrustLineFlagsOp
+  LIQUIDITY_POOL_FEE_V18 = 30
+  autoload :LiquidityPoolDepositOp
+  autoload :LiquidityPoolWithdrawOp
   autoload :Operation
-  autoload :OperationID
+  autoload :HashIDPreimage
   autoload :MemoType
   autoload :Memo
   autoload :TimeBounds
+  autoload :LedgerBounds
+  autoload :PreconditionsV2
+  autoload :PreconditionType
+  autoload :Preconditions
   MAX_OPS_PER_TX = 100
   autoload :TransactionV0
   autoload :TransactionV0Envelope
@@ -108,7 +137,11 @@ module Digitalbits
   autoload :FeeBumpTransactionEnvelope
   autoload :TransactionEnvelope
   autoload :TransactionSignaturePayload
+  autoload :ClaimAtomType
+  autoload :ClaimOfferAtomV0
   autoload :ClaimOfferAtom
+  autoload :ClaimLiquidityAtom
+  autoload :ClaimAtom
   autoload :CreateAccountResultCode
   autoload :CreateAccountResult
   autoload :PaymentResultCode
@@ -149,6 +182,16 @@ module Digitalbits
   autoload :EndSponsoringFutureReservesResult
   autoload :RevokeSponsorshipResultCode
   autoload :RevokeSponsorshipResult
+  autoload :ClawbackResultCode
+  autoload :ClawbackResult
+  autoload :ClawbackClaimableBalanceResultCode
+  autoload :ClawbackClaimableBalanceResult
+  autoload :SetTrustLineFlagsResultCode
+  autoload :SetTrustLineFlagsResult
+  autoload :LiquidityPoolDepositResultCode
+  autoload :LiquidityPoolDepositResult
+  autoload :LiquidityPoolWithdrawResultCode
+  autoload :LiquidityPoolWithdrawResult
   autoload :OperationResultCode
   autoload :OperationResult
   autoload :TransactionResultCode
@@ -156,13 +199,16 @@ module Digitalbits
   autoload :InnerTransactionResultPair
   autoload :TransactionResult
 end
-module Digitalbits
+module DigitalBits
   include XDR::Namespace
 
   UpgradeType = XDR::VarOpaque[128]
   autoload :DigitalBitsValueType
   autoload :LedgerCloseValueSignature
   autoload :DigitalBitsValue
+  MASK_LEDGER_HEADER_FLAGS = 0x7
+  autoload :LedgerHeaderFlags
+  autoload :LedgerHeaderExtensionV1
   autoload :LedgerHeader
   autoload :LedgerUpgradeType
   autoload :LedgerUpgrade
@@ -190,11 +236,12 @@ module Digitalbits
   autoload :LedgerCloseMetaV0
   autoload :LedgerCloseMeta
 end
-module Digitalbits
+module DigitalBits
   include XDR::Namespace
 
   autoload :ErrorCode
   autoload :Error
+  autoload :SendMore
   autoload :AuthCert
   autoload :Hello
   autoload :Auth
@@ -215,7 +262,7 @@ module Digitalbits
   autoload :DigitalBitsMessage
   autoload :AuthenticatedMessage
 end
-module Digitalbits
+module DigitalBits
   include XDR::Namespace
 
   Value = XDR::VarOpaque[]

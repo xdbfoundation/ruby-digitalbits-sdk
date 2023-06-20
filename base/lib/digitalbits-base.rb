@@ -14,20 +14,23 @@ require_relative "digitalbits/ext/xdr"
 silence_warnings do
   require "digitalbits-base-generated"
 end
-Digitalbits.load_all!
+DigitalBits.load_all!
 
 require_relative "digitalbits/version"
 
-Digitalbits::ONE = 1_0000000
-Digitalbits::Deprecation = ActiveSupport::Deprecation.new("next release", "digitalbits-base")
+DigitalBits::ONE = 1_0000000
+DigitalBits::Deprecation = ActiveSupport::Deprecation.new("next release", "digitalbits-base")
 
 # extensions onto the generated files must be loaded manually, below
 
+require_relative "./digitalbits/account"
 require_relative "./digitalbits/account_flags"
+require_relative "./digitalbits/amount"
 require_relative "./digitalbits/asset"
 require_relative "./digitalbits/claim_predicate"
 require_relative "./digitalbits/key_pair"
 require_relative "./digitalbits/ledger_key"
+require_relative "./digitalbits/liquidity_pool"
 require_relative "./digitalbits/networks"
 require_relative "./digitalbits/operation"
 require_relative "./digitalbits/path_payment_strict_receive_result"

@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class PaymentOp < XDR::Struct
     attribute :destination, MuxedAccount
     attribute :asset,       Asset

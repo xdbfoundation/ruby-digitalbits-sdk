@@ -13,7 +13,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AuthenticatedMessage
     class V0 < XDR::Struct
       attribute :sequence, Uint64

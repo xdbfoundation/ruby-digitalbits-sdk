@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerKey
     class Data < XDR::Struct
       attribute :account_id, AccountID

@@ -14,7 +14,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ThresholdIndexes < XDR::Enum
     member :threshold_master_weight, 0
     member :threshold_low,           1

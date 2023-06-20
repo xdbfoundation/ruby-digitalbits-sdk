@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TimeBounds < XDR::Struct
     attribute :min_time, TimePoint
     attribute :max_time, TimePoint

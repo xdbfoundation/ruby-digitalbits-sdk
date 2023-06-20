@@ -13,7 +13,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AuthCert < XDR::Struct
     attribute :pubkey,     Curve25519Public
     attribute :expiration, Uint64

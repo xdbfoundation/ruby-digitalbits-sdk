@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ErrorCode < XDR::Enum
     member :err_misc, 0
     member :err_data, 1

@@ -14,17 +14,19 @@ require 'xdr'
 #       REVOKE_SPONSORSHIP_DOES_NOT_EXIST = -1,
 #       REVOKE_SPONSORSHIP_NOT_SPONSOR = -2,
 #       REVOKE_SPONSORSHIP_LOW_RESERVE = -3,
-#       REVOKE_SPONSORSHIP_ONLY_TRANSFERABLE = -4
+#       REVOKE_SPONSORSHIP_ONLY_TRANSFERABLE = -4,
+#       REVOKE_SPONSORSHIP_MALFORMED = -5
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class RevokeSponsorshipResultCode < XDR::Enum
     member :revoke_sponsorship_success,           0
     member :revoke_sponsorship_does_not_exist,    -1
     member :revoke_sponsorship_not_sponsor,       -2
     member :revoke_sponsorship_low_reserve,       -3
     member :revoke_sponsorship_only_transferable, -4
+    member :revoke_sponsorship_malformed,         -5
 
     seal
   end

@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class MuxedAccount < XDR::Union
     include XDR::Namespace
 

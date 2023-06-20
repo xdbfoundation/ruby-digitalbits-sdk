@@ -1,4 +1,4 @@
-module Digitalbits
+module DigitalBits
   class KeyPair
     module FactoryMethods
       def from_seed(seed)
@@ -34,7 +34,7 @@ module Digitalbits
       end
 
       def master
-        from_raw_seed(Digitalbits.current_network_id)
+        from_raw_seed(DigitalBits.current_network_id)
       end
     end
 
@@ -56,19 +56,19 @@ module Digitalbits
     end
 
     def account_id
-      Digitalbits::AccountID.new :public_key_type_ed25519, raw_public_key
+      DigitalBits::AccountID.new :public_key_type_ed25519, raw_public_key
     end
 
     def muxed_account
-      Digitalbits::MuxedAccount.new :key_type_ed25519, raw_public_key
+      DigitalBits::MuxedAccount.new :key_type_ed25519, raw_public_key
     end
 
     def public_key
-      Digitalbits::PublicKey.new :public_key_type_ed25519, raw_public_key
+      DigitalBits::PublicKey.new :public_key_type_ed25519, raw_public_key
     end
 
     def signer_key
-      Digitalbits::SignerKey.new :signer_key_type_ed25519, raw_public_key
+      DigitalBits::SignerKey.new :signer_key_type_ed25519, raw_public_key
     end
 
     def signature_hint
@@ -105,7 +105,7 @@ module Digitalbits
 
     def sign_decorated(message)
       raw_signature = sign(message)
-      Digitalbits::DecoratedSignature.new({
+      DigitalBits::DecoratedSignature.new({
         hint: signature_hint,
         signature: raw_signature
       })

@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class TransactionMetaV2 < XDR::Struct
     attribute :tx_changes_before, LedgerEntryChanges
     attribute :operations,        XDR::VarArray[OperationMeta]

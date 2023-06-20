@@ -9,16 +9,20 @@ require 'xdr'
 #       {
 #       case 0:
 #           void;
+#       case 1:
+#           LedgerHeaderExtensionV1 v1;
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerHeader
     class Ext < XDR::Union
       switch_on XDR::Int, :v
 
       switch 0
+      switch 1, :v1
 
+      attribute :v1, LedgerHeaderExtensionV1
     end
   end
 end

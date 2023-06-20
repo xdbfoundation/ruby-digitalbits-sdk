@@ -38,7 +38,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SCPStatement
     class Pledges < XDR::Union
       include XDR::Namespace

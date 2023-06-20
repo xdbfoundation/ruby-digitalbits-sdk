@@ -1,4 +1,4 @@
-module Digitalbits::Concerns
+module DigitalBits::Concerns
   module Transaction
     # Returns the string of bytes that, when hashed, provide the value which
     # should be signed to create a valid digitalbits transaction signature
@@ -32,7 +32,7 @@ module Digitalbits::Concerns
     #
     # @return [Array<Operation>] the operations
     def to_operations
-      codec = XDR::VarArray[Digitalbits::Operation]
+      codec = XDR::VarArray[DigitalBits::Operation]
       ops = respond_to?(:operations) ? operations : inner_tx.value.tx.operations
       cloned = codec.from_xdr(codec.to_xdr(ops))
       cloned.each do |op|
@@ -43,8 +43,8 @@ module Digitalbits::Concerns
     def apply_defaults
       self.operations ||= []
       self.fee ||= 100
-      self.memo ||= Digitalbits::Memo.new(:memo_none)
-      self.ext ||= Digitalbits::Transaction::Ext.new 0
+      self.memo ||= DigitalBits::Memo.new(:memo_none)
+      self.ext ||= DigitalBits::Transaction::Ext.new 0
     end
   end
 end

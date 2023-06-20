@@ -30,7 +30,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ManageBuyOfferResultCode < XDR::Enum
     member :manage_buy_offer_success,             0
     member :manage_buy_offer_malformed,           -1

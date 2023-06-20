@@ -48,6 +48,16 @@ require 'xdr'
 #           EndSponsoringFutureReservesResult endSponsoringFutureReservesResult;
 #       case REVOKE_SPONSORSHIP:
 #           RevokeSponsorshipResult revokeSponsorshipResult;
+#       case CLAWBACK:
+#           ClawbackResult clawbackResult;
+#       case CLAWBACK_CLAIMABLE_BALANCE:
+#           ClawbackClaimableBalanceResult clawbackClaimableBalanceResult;
+#       case SET_TRUST_LINE_FLAGS:
+#           SetTrustLineFlagsResult setTrustLineFlagsResult;
+#       case LIQUIDITY_POOL_DEPOSIT:
+#           LiquidityPoolDepositResult liquidityPoolDepositResult;
+#       case LIQUIDITY_POOL_WITHDRAW:
+#           LiquidityPoolWithdrawResult liquidityPoolWithdrawResult;
 #       }
 #       tr;
 #   default:
@@ -55,7 +65,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class OperationResult < XDR::Union
     include XDR::Namespace
 

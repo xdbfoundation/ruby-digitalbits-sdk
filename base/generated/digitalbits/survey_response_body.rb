@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SurveyResponseBody < XDR::Union
     switch_on SurveyMessageCommandType, :type
 

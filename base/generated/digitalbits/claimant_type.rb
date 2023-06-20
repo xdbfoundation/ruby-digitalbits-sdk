@@ -11,7 +11,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ClaimantType < XDR::Enum
     member :claimant_type_v0, 0
 

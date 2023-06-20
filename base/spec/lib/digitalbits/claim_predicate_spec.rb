@@ -1,9 +1,9 @@
-RSpec.describe Digitalbits::ClaimPredicate do
+RSpec.describe DigitalBits::ClaimPredicate do
   describe ".unconditional" do
     subject { described_class.unconditional }
 
-    it { is_expected.to be_a(Digitalbits::ClaimPredicate) }
-    its(:type) { is_expected.to be(Digitalbits::ClaimPredicateType::UNCONDITIONAL) }
+    it { is_expected.to be_a(DigitalBits::ClaimPredicate) }
+    its(:type) { is_expected.to be(DigitalBits::ClaimPredicateType::UNCONDITIONAL) }
     its(:value) { is_expected.to be_nil }
   end
 
@@ -11,8 +11,8 @@ RSpec.describe Digitalbits::ClaimPredicate do
     let(:timestamp) { 123456789 }
     subject(:predicate) { described_class.before_absolute_time(timestamp) }
 
-    it { is_expected.to be_a(Digitalbits::ClaimPredicate) }
-    its(:type) { is_expected.to be(Digitalbits::ClaimPredicateType::BEFORE_ABSOLUTE_TIME) }
+    it { is_expected.to be_a(DigitalBits::ClaimPredicate) }
+    its(:type) { is_expected.to be(DigitalBits::ClaimPredicateType::BEFORE_ABSOLUTE_TIME) }
     its(:value) { is_expected.to eq(123456789) }
 
     context "with incorrect args" do
@@ -25,7 +25,7 @@ RSpec.describe Digitalbits::ClaimPredicate do
     let(:duration) { 3600 }
     subject(:predicate) { described_class.before_relative_time(duration) }
 
-    its(:type) { is_expected.to be(Digitalbits::ClaimPredicateType::BEFORE_RELATIVE_TIME) }
+    its(:type) { is_expected.to be(DigitalBits::ClaimPredicateType::BEFORE_RELATIVE_TIME) }
     its(:value) { is_expected.to eq(3600) }
 
     context "with incorrect args" do
@@ -40,7 +40,7 @@ RSpec.describe Digitalbits::ClaimPredicate do
 
     subject(:call) { predicate.and(other) }
 
-    its(:type) { is_expected.to be(Digitalbits::ClaimPredicateType::AND) }
+    its(:type) { is_expected.to be(DigitalBits::ClaimPredicateType::AND) }
     its(:value) { is_expected.to contain_exactly(predicate, other) }
 
     context "with incorrect arg" do
@@ -55,7 +55,7 @@ RSpec.describe Digitalbits::ClaimPredicate do
 
     subject(:call) { predicate.or(other) }
 
-    its(:type) { is_expected.to be(Digitalbits::ClaimPredicateType::OR) }
+    its(:type) { is_expected.to be(DigitalBits::ClaimPredicateType::OR) }
     its(:value) { is_expected.to contain_exactly(predicate, other) }
 
     context "with incorrect arg" do
@@ -69,7 +69,7 @@ RSpec.describe Digitalbits::ClaimPredicate do
 
     subject(:call) { predicate.not }
 
-    its(:type) { is_expected.to be(Digitalbits::ClaimPredicateType::NOT) }
+    its(:type) { is_expected.to be(DigitalBits::ClaimPredicateType::NOT) }
     its(:value) { is_expected.to be(predicate) }
   end
 

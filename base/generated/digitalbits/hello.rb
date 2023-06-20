@@ -19,7 +19,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Hello < XDR::Struct
     attribute :ledger_version,      Uint32
     attribute :overlay_version,     Uint32

@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerSCPMessages < XDR::Struct
     attribute :ledger_seq, Uint32
     attribute :messages,   XDR::VarArray[SCPEnvelope]

@@ -1,4 +1,4 @@
-module Digitalbits
+module DigitalBits
   class SignerKey
     PREIMAGE_LENGTH = 32
 
@@ -22,20 +22,20 @@ module Digitalbits
     def to_s
       case switch
       when SignerKeyType.signer_key_type_ed25519
-        address = Digitalbits::Convert.pk_to_address(self)
+        address = DigitalBits::Convert.pk_to_address(self)
         "ed25519: #{address}"
       when SignerKeyType.signer_key_type_pre_auth_tx
-        tx = Digitalbits::Convert.to_hex(pre_auth_tx!)
+        tx = DigitalBits::Convert.to_hex(pre_auth_tx!)
         "pre_auth_tx: #{tx}"
       when SignerKeyType.signer_key_type_hash_x
-        hx = Digitalbits::Convert.to_hex(hash_x!)
+        hx = DigitalBits::Convert.to_hex(hash_x!)
         "hash_x: #{hx}"
       end
     end
 
     def inspect
       # label = switch.to_s
-      "#<Digitalbits::SignerKey #{self}>"
+      "#<DigitalBits::SignerKey #{self}>"
     end
 
     def signature_hint

@@ -8,32 +8,17 @@ require 'xdr'
 #   struct AllowTrustOp
 #   {
 #       AccountID trustor;
-#       union switch (AssetType type)
-#       {
-#       // ASSET_TYPE_NATIVE is not allowed
-#       case ASSET_TYPE_CREDIT_ALPHANUM4:
-#           AssetCode4 assetCode4;
+#       AssetCode asset;
 #   
-#       case ASSET_TYPE_CREDIT_ALPHANUM12:
-#           AssetCode12 assetCode12;
-#   
-#           // add other asset types here in the future
-#       }
-#       asset;
-#   
-#       // 0, or any bitwise combination of TrustLineFlags
+#       // One of 0, AUTHORIZED_FLAG, or AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG
 #       uint32 authorize;
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AllowTrustOp < XDR::Struct
-    include XDR::Namespace
-
-    autoload :Asset
-
     attribute :trustor,   AccountID
-    attribute :asset,     Asset
+    attribute :asset,     AssetCode
     attribute :authorize, Uint32
   end
 end

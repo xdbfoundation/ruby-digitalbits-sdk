@@ -8,7 +8,7 @@ require 'xdr'
 #   struct ManageOfferSuccessResult
 #   {
 #       // offers that got claimed while creating this offer
-#       ClaimOfferAtom offersClaimed<>;
+#       ClaimAtom offersClaimed<>;
 #   
 #       union switch (ManageOfferEffect effect)
 #       {
@@ -22,13 +22,13 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ManageOfferSuccessResult < XDR::Struct
     include XDR::Namespace
 
     autoload :Offer
 
-    attribute :offers_claimed, XDR::VarArray[ClaimOfferAtom]
+    attribute :offers_claimed, XDR::VarArray[ClaimAtom]
     attribute :offer,          Offer
   end
 end

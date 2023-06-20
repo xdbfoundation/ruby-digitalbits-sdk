@@ -21,6 +21,8 @@ require 'xdr'
 #           DataEntry data;
 #       case CLAIMABLE_BALANCE:
 #           ClaimableBalanceEntry claimableBalance;
+#       case LIQUIDITY_POOL:
+#           LiquidityPoolEntry liquidityPool;
 #       }
 #       data;
 #   
@@ -36,7 +38,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerEntry < XDR::Struct
     include XDR::Namespace
 

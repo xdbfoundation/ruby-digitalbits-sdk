@@ -12,7 +12,7 @@ require 'xdr'
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class FeeBumpTransaction
     class InnerTx < XDR::Union
       switch_on EnvelopeType, :type

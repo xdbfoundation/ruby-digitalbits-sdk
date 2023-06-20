@@ -7,12 +7,13 @@ require 'xdr'
 #
 #   enum OfferEntryFlags
 #   {
-#       // issuer has authorized account to perform transactions with its credit
+#       // an offer with this flag will not act on and take a reverse offer of equal
+#       // price
 #       PASSIVE_FLAG = 1
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class OfferEntryFlags < XDR::Enum
     member :passive_flag, 1
 

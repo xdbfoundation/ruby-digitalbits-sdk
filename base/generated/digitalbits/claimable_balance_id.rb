@@ -12,7 +12,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ClaimableBalanceID < XDR::Union
     switch_on ClaimableBalanceIDType, :type
 

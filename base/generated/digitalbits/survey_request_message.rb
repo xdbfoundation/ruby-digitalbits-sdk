@@ -15,7 +15,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class SurveyRequestMessage < XDR::Struct
     attribute :surveyor_peer_id, NodeID
     attribute :surveyed_peer_id, NodeID

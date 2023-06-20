@@ -1,9 +1,13 @@
-module Digitalbits
+module DigitalBits
   class TransactionV0
-    include Digitalbits::Concerns::Transaction
+    include DigitalBits::Concerns::Transaction
 
     def to_v1
-      Transaction.new(**attributes.except(:source_account_ed25519), source_account: source_account)
+      Transaction.new(
+        **attributes.except(:source_account_ed25519, :time_bounds),
+        cond: DigitalBits::Preconditions.new(:precond_time, time_bounds),
+        source_account: source_account
+      )
     end
 
     def to_envelope(*key_pairs)
@@ -13,31 +17,31 @@ module Digitalbits
     end
 
     def signature_base_prefix
-      val = Digitalbits::EnvelopeType.envelope_type_tx_v0
+      val = DigitalBits::EnvelopeType.envelope_type_tx_v0
 
-      Digitalbits.current_network_id + Digitalbits::EnvelopeType.to_xdr(val)
+      DigitalBits.current_network_id + DigitalBits::EnvelopeType.to_xdr(val)
     end
 
     # Backwards Compatibility: Use ENVELOPE_TYPE_TX to sign ENVELOPE_TYPE_TX_V0
     # we need a Transaction to generate the signature base
     def signature_base
-      tx = Digitalbits::Transaction.from_xdr(
+      tx = DigitalBits::Transaction.from_xdr(
         # TransactionV0 is a transaction with the AccountID discriminant
         # stripped off, we need to put it back to build a valid transaction
         # which we can use to build a TransactionSignaturePayloadTaggedTransaction
-        Digitalbits::PublicKeyType.to_xdr(Digitalbits::PublicKeyType.public_key_type_ed25519) + to_xdr
+        DigitalBits::PublicKeyType.to_xdr(DigitalBits::PublicKeyType.public_key_type_ed25519) + to_xdr
       )
 
-      tagged_tx = Digitalbits::TransactionSignaturePayload::TaggedTransaction.new(:envelope_type_tx, tx)
+      tagged_tx = DigitalBits::TransactionSignaturePayload::TaggedTransaction.new(:envelope_type_tx, tx)
 
-      Digitalbits::TransactionSignaturePayload.new(
-        network_id: Digitalbits.current_network_id,
+      DigitalBits::TransactionSignaturePayload.new(
+        network_id: DigitalBits.current_network_id,
         tagged_transaction: tagged_tx
       ).to_xdr
     end
 
     def source_account
-      Digitalbits::MuxedAccount.ed25519(source_account_ed25519)
+      DigitalBits::MuxedAccount.ed25519(source_account_ed25519)
     end
   end
 end

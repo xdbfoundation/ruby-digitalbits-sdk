@@ -9,16 +9,20 @@ require 'xdr'
 #       {
 #       case 0:
 #           void;
+#       case 3:
+#           AccountEntryExtensionV3 v3;
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AccountEntryExtensionV2
     class Ext < XDR::Union
       switch_on XDR::Int, :v
 
       switch 0
+      switch 3, :v3
 
+      attribute :v3, AccountEntryExtensionV3
     end
   end
 end

@@ -10,7 +10,7 @@ require_relative "support/matchers/eq_bytes"
 require_relative "support/matchers/have_length"
 
 RSpec.configure do |config|
-  config.include Digitalbits::DSL
+  config.include DigitalBits::DSL
 
   config.filter_run_when_matching focus: true
   config.run_all_when_everything_filtered = true

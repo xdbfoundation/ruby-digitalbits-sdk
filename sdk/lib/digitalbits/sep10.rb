@@ -1,28 +1,34 @@
-module Digitalbits
+module DigitalBits
   class InvalidSep10ChallengeError < StandardError; end
 
   class SEP10
-    include Digitalbits::DSL
+    include DigitalBits::DSL
 
-    # Helper method to create a valid challenge transaction which you can use for DigitalBits Web Authentication.
+    # We use a small grace period for the challenge transaction time bounds
+    # to compensate possible clock drift on client's machine
+    GRACE_PERIOD = 5.minutes
+
+    # Helper method to create a valid {SEP0010}[https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0010.md]
+    # challenge transaction which you can use for DigitalBits Web Authentication.
     #
     # @example
-    #   server = Digitalbits::KeyPair.random # SIGNING_KEY from your digitalbits.toml
-    #   user = Digitalbits::KeyPair.from_address('G...')
-    #   Digitalbits::SEP10.build_challenge_tx(server: server, client: user, domain: 'example.com', timeout: 300)
+    #   server = DigitalBits::KeyPair.random # SIGNING_KEY from your digitalbits.toml
+    #   user = DigitalBits::KeyPair.from_address('G...')
+    #   DigitalBits::SEP10.build_challenge_tx(server: server, client: user, domain: 'example.com', timeout: 300)
     #
-    # @param server [Digitalbits::KeyPair] server's signing keypair (SIGNING_KEY in service's digitalbits.toml)
-    # @param client [Digitalbits::KeyPair] account trying to authenticate with the server
+    # @param server [DigitalBits::KeyPair] server's signing keypair (SIGNING_KEY in service's digitalbits.toml)
+    # @param client [DigitalBits::KeyPair] account trying to authenticate with the server
     # @param domain [String] service's domain to be used in the manage_data key
     # @param timeout [Integer] challenge duration (default to 5 minutes)
     #
     # @return [String] A base64 encoded string of the raw TransactionEnvelope xdr struct for the transaction.
     #
+    # @see {SEP0010: DigitalBits Web Authentication}[https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0010.md]
     def self.build_challenge_tx(server:, client:, domain: nil, timeout: 300, **options)
       if domain.blank? && options.key?(:anchor_name)
         ActiveSupport::Deprecation.new("next release", "digitalbits-sdk").warn <<~MSG
           SEP-10 v2.0.0 requires usage of service home domain instead of anchor name in the challenge transaction.
-          Please update your implementation to use `Digitalbits::SEP10.build_challenge_tx(..., home_domain: 'example.com')`.
+          Please update your implementation to use `DigitalBits::SEP10.build_challenge_tx(..., home_domain: 'example.com')`.
           Using `anchor_name` parameter makes your service incompatible with SEP10-2.0 clients, support for this parameter
           is deprecated and will be removed in the next major release of digitalbits-base.
         MSG
@@ -30,12 +36,12 @@ module Digitalbits
       end
 
       now = Time.now.to_i
-      time_bounds = Digitalbits::TimeBounds.new(
+      time_bounds = DigitalBits::TimeBounds.new(
         min_time: now,
         max_time: now + timeout
       )
 
-      tb = Digitalbits::TransactionBuilder.new(
+      tb = DigitalBits::TransactionBuilder.new(
         source_account: server,
         sequence_number: 0,
         time_bounds: time_bounds
@@ -45,7 +51,7 @@ module Digitalbits
       # cryptographic-quality random string encoded using base64 (for a total of
       # 64 bytes after encoding).
       tb.add_operation(
-        Digitalbits::Operation.manage_data(
+        DigitalBits::Operation.manage_data(
           name: "#{domain} auth",
           value: SecureRandom.base64(48),
           source_account: client
@@ -54,10 +60,24 @@ module Digitalbits
 
       if options.key?(:auth_domain)
         tb.add_operation(
-          Digitalbits::Operation.manage_data(
+          DigitalBits::Operation.manage_data(
             name: "web_auth_domain",
             value: options[:auth_domain],
             source_account: server
+          )
+        )
+      end
+
+      if options[:client_domain].present?
+        if options[:client_domain_account].blank?
+          raise "`client_domain_account` is required, if `client_domain` is provided"
+        end
+
+        tb.add_operation(
+          DigitalBits::Operation.manage_data(
+            name: "client_domain",
+            value: options[:client_domain],
+            source_account: options[:client_domain_account]
           )
         )
       end
@@ -75,17 +95,17 @@ module Digitalbits
     # the signed challenge
     #
     # @example
-    #   sep10 = Digitalbits::SEP10
-    #   server = Digitalbits::KeyPair.random # this should be the SIGNING_KEY from your digitalbits.toml
+    #   sep10 = DigitalBits::SEP10
+    #   server = DigitalBits::KeyPair.random # this should be the SIGNING_KEY from your digitalbits.toml
     #   challenge = sep10.build_challenge_tx(server: server, client: user, domain: domain, timeout: timeout)
     #   envelope, client_address = sep10.read_challenge_tx(server: server, challenge_xdr: challenge)
     #
     # @param challenge_xdr [String] SEP0010 transaction challenge in base64.
-    # @param server [Digitalbits::KeyPair] keypair for server where the challenge was generated.
+    # @param server [DigitalBits::KeyPair] keypair for server where the challenge was generated.
     #
-    # @return [Array(Digitalbits::TransactionEnvelope, String)]
+    # @return [Array(DigitalBits::TransactionEnvelope, String)]
     def self.read_challenge_tx(server:, challenge_xdr:, **options)
-      envelope = Digitalbits::TransactionEnvelope.from_xdr(challenge_xdr, "base64")
+      envelope = DigitalBits::TransactionEnvelope.from_xdr(challenge_xdr, "base64")
       transaction = envelope.tx
 
       if transaction.seq_num != 0
@@ -123,16 +143,14 @@ module Digitalbits
 
       rest_ops.each do |op|
         body = op.body
+        op_params = body.value
 
         if body.arm != :manage_data_op
           raise InvalidSep10ChallengeError, "The transaction has operations that are not of type 'manageData'"
-        elsif op.source_account != server.muxed_account
+        elsif op.source_account != server.muxed_account && op_params.data_name != "client_domain"
           raise InvalidSep10ChallengeError, "The transaction has operations that are unrecognized"
-        else
-          op_params = body.value
-          if op_params.data_name == "web_auth_domain" && options.key?(:auth_domain) && op_params.data_value != options[:auth_domain]
-            raise InvalidSep10ChallengeError, "The transaction has 'manageData' operation with 'web_auth_domain' key and invalid value"
-          end
+        elsif op_params.data_name == "web_auth_domain" && options.key?(:auth_domain) && op_params.data_value != options[:auth_domain]
+          raise InvalidSep10ChallengeError, "The transaction has 'manageData' operation with 'web_auth_domain' key and invalid value"
         end
       end
 
@@ -140,15 +158,15 @@ module Digitalbits
         raise InvalidSep10ChallengeError, "The transaction is not signed by the server"
       end
 
-      time_bounds = transaction.time_bounds
+      time_bounds = transaction.cond.time_bounds
       now = Time.now.to_i
 
-      if time_bounds.blank? || !now.between?(time_bounds.min_time, time_bounds.max_time)
+      if time_bounds.blank? || !now.between?(time_bounds.min_time - GRACE_PERIOD, time_bounds.max_time + GRACE_PERIOD)
         raise InvalidSep10ChallengeError, "The transaction has expired"
       end
 
       # Mirror the return type of the other SDK's and return a string
-      client_kp = Digitalbits::KeyPair.from_public_key(client_account_id.ed25519!)
+      client_kp = DigitalBits::KeyPair.from_public_key(client_account_id.ed25519!)
 
       [envelope, client_kp.address]
     end
@@ -159,7 +177,7 @@ module Digitalbits
     # signatures match a signer that has been provided as an argument, and those
     # signatures meet a threshold on the account.
     #
-    # @param server [Digitalbits::KeyPair] keypair for server's account.
+    # @param server [DigitalBits::KeyPair] keypair for server's account.
     # @param challenge_xdr [String] SEP0010 challenge transaction in base64.
     # @param signers [{String => Integer}] The signers of client account.
     # @param threshold [Integer] The medThreshold on the client account.
@@ -191,7 +209,7 @@ module Digitalbits
     #
     # If verification succeeds a list of signers that were found is returned, excluding the server account ID.
     #
-    # @param server [Digitalbits::Keypair]  server's signing key
+    # @param server [DigitalBits::Keypair]  server's signing key
     # @param challenge_xdr [String] SEP0010 transaction challenge transaction in base64.
     # @param signers [<String>] The signers of client account.
     #
@@ -207,6 +225,9 @@ module Digitalbits
       # ignore non-G signers and server's own address
       client_signers = signers.select { |s| s =~ /G[A-Z0-9]{55}/ && s != server.address }.to_set
       raise InvalidSep10ChallengeError, "at least one regular signer must be provided" if client_signers.empty?
+
+      client_domain_account_address = extract_client_domain_account(te.tx)
+      client_signers.add(client_domain_account_address) if client_domain_account_address.present?
 
       # verify all signatures in one pass
       client_signers.add(server.address)
@@ -227,16 +248,20 @@ module Digitalbits
         raise InvalidSep10ChallengeError, "Transaction has unrecognized signatures."
       end
 
+      if client_domain_account_address.present? && !signers_found.include?(client_domain_account_address)
+        raise InvalidSep10ChallengeError, "Transaction not signed by client domain account."
+      end
+
       signers_found
     end
 
     # Verifies every signer passed matches a signature on the transaction exactly once,
     # returning a list of unique signers that were found to have signed the transaction.
     #
-    # @param tx_envelope [Digitalbits::TransactionEnvelope] SEP0010 transaction challenge transaction envelope.
+    # @param tx_envelope [DigitalBits::TransactionEnvelope] SEP0010 transaction challenge transaction envelope.
     # @param signers [<String>] The signers of client account.
     #
-    # @return [Set<Digitalbits::KeyPair>]
+    # @return [Set<DigitalBits::KeyPair>]
     def self.verify_tx_signatures(tx_envelope:, signers:)
       signatures = tx_envelope.signatures
       if signatures.empty?
@@ -244,22 +269,22 @@ module Digitalbits
       end
 
       tx_hash = tx_envelope.tx.hash
-      to_keypair = Digitalbits::DSL.method(:KeyPair)
+      to_keypair = DigitalBits::DSL.method(:KeyPair)
       keys_by_hint = signers.map(&to_keypair).index_by(&:signature_hint)
 
-      tx_envelope.signatures.each.with_object(Set.new) do |sig, result|
+      signatures.each_with_object(Set.new) do |sig, result|
         key = keys_by_hint.delete(sig.hint)
         result.add(key.address) if key&.verify(sig.signature, tx_hash)
       end
     end
 
-    # Verifies if a Digitalbits::TransactionEnvelope was signed by the given Digitalbits::KeyPair
+    # Verifies if a DigitalBits::TransactionEnvelope was signed by the given DigitalBits::KeyPair
     #
     # @example
-    #   Digitalbits::SEP10.verify_tx_signed_by(tx_envelope: envelope, keypair: keypair)
+    #   DigitalBits::SEP10.verify_tx_signed_by(tx_envelope: envelope, keypair: keypair)
     #
-    # @param tx_envelope [Digitalbits::TransactionEnvelope]
-    # @param keypair [Digitalbits::KeyPair]
+    # @param tx_envelope [DigitalBits::TransactionEnvelope]
+    # @param keypair [DigitalBits::KeyPair]
     #
     # @return [Boolean]
     def self.verify_tx_signed_by(tx_envelope:, keypair:)
@@ -269,6 +294,17 @@ module Digitalbits
 
         keypair.verify(sig.signature, tx_hash)
       end
+    end
+
+    def self.extract_client_domain_account(transaction)
+      client_domain_account_op =
+        transaction
+          .operations
+          .find { |op| op.body.value.data_name == "client_domain" }
+
+      return if client_domain_account_op.blank?
+
+      Util::StrKey.encode_muxed_account(client_domain_account_op.source_account)
     end
   end
 end

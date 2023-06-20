@@ -18,7 +18,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class OperationResultCode < XDR::Enum
     member :op_inner,               0
     member :op_bad_auth,            -1

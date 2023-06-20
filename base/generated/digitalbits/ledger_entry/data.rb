@@ -17,10 +17,12 @@ require 'xdr'
 #           DataEntry data;
 #       case CLAIMABLE_BALANCE:
 #           ClaimableBalanceEntry claimableBalance;
+#       case LIQUIDITY_POOL:
+#           LiquidityPoolEntry liquidityPool;
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class LedgerEntry
     class Data < XDR::Union
       switch_on LedgerEntryType, :type
@@ -30,12 +32,14 @@ module Digitalbits
       switch :offer,             :offer
       switch :data,              :data
       switch :claimable_balance, :claimable_balance
+      switch :liquidity_pool,    :liquidity_pool
 
       attribute :account,           AccountEntry
       attribute :trust_line,        TrustLineEntry
       attribute :offer,             OfferEntry
       attribute :data,              DataEntry
       attribute :claimable_balance, ClaimableBalanceEntry
+      attribute :liquidity_pool,    LiquidityPoolEntry
     end
   end
 end

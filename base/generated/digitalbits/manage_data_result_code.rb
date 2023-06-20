@@ -19,7 +19,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ManageDataResultCode < XDR::Enum
     member :manage_data_success,           0
     member :manage_data_not_supported_yet, -1

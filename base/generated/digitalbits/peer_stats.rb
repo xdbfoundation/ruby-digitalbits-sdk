@@ -27,7 +27,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class PeerStats < XDR::Struct
     attribute :id,                           NodeID
     attribute :version_str,                  XDR::String[100]

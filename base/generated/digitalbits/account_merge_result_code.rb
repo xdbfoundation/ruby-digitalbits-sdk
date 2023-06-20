@@ -21,7 +21,7 @@ require 'xdr'
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class AccountMergeResultCode < XDR::Enum
     member :account_merge_success,         0
     member :account_merge_malformed,       -1

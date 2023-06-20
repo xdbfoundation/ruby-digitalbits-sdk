@@ -1,3 +1,3 @@
-module Digitalbits
-  VERSION = "0.27.2"
+module DigitalBits
+  VERSION = "0.32.0".freeze
 end

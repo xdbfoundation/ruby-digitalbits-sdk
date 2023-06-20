@@ -45,10 +45,20 @@ require 'xdr'
 #           void;
 #       case REVOKE_SPONSORSHIP:
 #           RevokeSponsorshipOp revokeSponsorshipOp;
+#       case CLAWBACK:
+#           ClawbackOp clawbackOp;
+#       case CLAWBACK_CLAIMABLE_BALANCE:
+#           ClawbackClaimableBalanceOp clawbackClaimableBalanceOp;
+#       case SET_TRUST_LINE_FLAGS:
+#           SetTrustLineFlagsOp setTrustLineFlagsOp;
+#       case LIQUIDITY_POOL_DEPOSIT:
+#           LiquidityPoolDepositOp liquidityPoolDepositOp;
+#       case LIQUIDITY_POOL_WITHDRAW:
+#           LiquidityPoolWithdrawOp liquidityPoolWithdrawOp;
 #       }
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class Operation
     class Body < XDR::Union
       switch_on OperationType, :type
@@ -72,6 +82,11 @@ module Digitalbits
       switch :begin_sponsoring_future_reserves, :begin_sponsoring_future_reserves_op
       switch :end_sponsoring_future_reserves
       switch :revoke_sponsorship,               :revoke_sponsorship_op
+      switch :clawback,                         :clawback_op
+      switch :clawback_claimable_balance,       :clawback_claimable_balance_op
+      switch :set_trust_line_flags,             :set_trust_line_flags_op
+      switch :liquidity_pool_deposit,           :liquidity_pool_deposit_op
+      switch :liquidity_pool_withdraw,          :liquidity_pool_withdraw_op
 
       attribute :create_account_op,                   CreateAccountOp
       attribute :payment_op,                          PaymentOp
@@ -90,6 +105,11 @@ module Digitalbits
       attribute :claim_claimable_balance_op,          ClaimClaimableBalanceOp
       attribute :begin_sponsoring_future_reserves_op, BeginSponsoringFutureReservesOp
       attribute :revoke_sponsorship_op,               RevokeSponsorshipOp
+      attribute :clawback_op,                         ClawbackOp
+      attribute :clawback_claimable_balance_op,       ClawbackClaimableBalanceOp
+      attribute :set_trust_line_flags_op,             SetTrustLineFlagsOp
+      attribute :liquidity_pool_deposit_op,           LiquidityPoolDepositOp
+      attribute :liquidity_pool_withdraw_op,          LiquidityPoolWithdrawOp
     end
   end
 end

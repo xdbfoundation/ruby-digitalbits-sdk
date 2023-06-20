@@ -24,12 +24,14 @@ require 'xdr'
 #       {
 #       case 0:
 #           void;
+#       case 1:
+#           ClaimableBalanceEntryExtensionV1 v1;
 #       }
 #       ext;
 #   };
 #
 # ===========================================================================
-module Digitalbits
+module DigitalBits
   class ClaimableBalanceEntry < XDR::Struct
     include XDR::Namespace
 

@@ -1,4 +1,4 @@
-RSpec.describe Digitalbits::SEP10 do
+RSpec.describe DigitalBits::SEP10 do
   let(:server) { KeyPair() }
   let(:user) { KeyPair() }
   let(:domain) { "testnet.digitalbits.io" }
@@ -6,7 +6,7 @@ RSpec.describe Digitalbits::SEP10 do
   let(:nonce) { SecureRandom.base64(48) }
 
   let(:challenge) { described_class.build_challenge_tx(server: server, client: user, domain: domain, **options) }
-  let(:envelope) { Digitalbits::TransactionEnvelope.from_xdr(challenge, :base64) }
+  let(:envelope) { DigitalBits::TransactionEnvelope.from_xdr(challenge, :base64) }
   let(:transaction) { envelope.tx }
 
   let(:signers) { [server, user] }
@@ -18,7 +18,7 @@ RSpec.describe Digitalbits::SEP10 do
 
     subject(:challenge) do
       xdr = described_class.build_challenge_tx(**attrs)
-      Digitalbits::TransactionEnvelope.from_xdr(xdr, :base64).tx
+      DigitalBits::TransactionEnvelope.from_xdr(xdr, :base64).tx
     end
 
     it "generates a valid SEP10 challenge" do
@@ -26,7 +26,7 @@ RSpec.describe Digitalbits::SEP10 do
       expect(challenge.operations.size).to eql(1)
       expect(challenge.source_account).to eql(server.muxed_account)
 
-      time_bounds = challenge.time_bounds
+      time_bounds = challenge.cond.time_bounds
       expect(time_bounds.max_time - time_bounds.min_time).to eql(300)
 
       operation = challenge.operations.first
@@ -42,7 +42,7 @@ RSpec.describe Digitalbits::SEP10 do
     it "allows to customize challenge timeout" do
       attrs[:timeout] = 600
 
-      time_bounds = challenge.time_bounds
+      time_bounds = challenge.cond.time_bounds
       expect(time_bounds.max_time - time_bounds.min_time).to eql(600)
     end
 
@@ -59,26 +59,40 @@ RSpec.describe Digitalbits::SEP10 do
       expect(body.data_name).to eql("web_auth_domain")
       expect(body.data_value).to eql("auth.example.com")
     end
+
+    it "allows to set client domain" do
+      client_domain_account = DigitalBits::KeyPair.random
+      attrs[:client_domain_account] = client_domain_account
+      attrs[:client_domain] = "client.test"
+
+      expect(challenge.operations.size).to eql(2)
+
+      client_domain_check_operation = challenge.operations[1]
+      expect(client_domain_check_operation.source_account).to eq(client_domain_account.muxed_account)
+
+      body = client_domain_check_operation.body
+      expect(body.arm).to eql(:manage_data_op)
+      expect(body.data_name).to eql("client_domain")
+      expect(body.data_value).to eql("client.test")
+    end
   end
 
   describe "#read_challenge_tx" do
     let(:attrs) { {challenge_xdr: response_xdr, server: server} }
 
-    let(:extra_operation) {
-      Digitalbits::Operation.manage_data(source_account: server, name: "extra", value: "operation")
-    }
+    let(:extra_operation) do
+      DigitalBits::Operation.manage_data(source_account: server, name: "extra", value: "operation")
+    end
 
-    let(:invalid_operation) {
-      Digitalbits::Operation.payment(source_account: server, destination: KeyPair(), amount: [:native, 20])
-    }
+    let(:invalid_operation) do
+      DigitalBits::Operation.payment(source_account: server, destination: KeyPair(), amount: [:native, 20])
+    end
 
-    let(:auth_domain_operation) {
-      Digitalbits::Operation.manage_data(source_account: server, name: "web_auth_domain", value: "wrong.example.com")
-    }
+    let(:auth_domain_operation) do
+      DigitalBits::Operation.manage_data(source_account: server, name: "web_auth_domain", value: "wrong.example.com")
+    end
 
-    subject(:read_challenge) {
-      described_class.read_challenge_tx(**attrs)
-    }
+    subject(:read_challenge) { described_class.read_challenge_tx(**attrs) }
 
     it "returns the envelope and client public key if the transaction is valid" do
       expect(read_challenge).to eq([response, user.address])
@@ -96,33 +110,44 @@ RSpec.describe Digitalbits::SEP10 do
       expect(read_challenge).to eq([response, user.address])
     end
 
-    it "throws an error if transaction sequence number is different to zero" do
-      transaction.seq_num = 1
+    context "when transaction sequence number is different to zero" do
+      before { transaction.seq_num = 1 }
 
-      expect { read_challenge }.to raise_invalid("sequence number should be zero")
+      it "raises an error" do
+        expect { read_challenge }.to raise_invalid("sequence number should be zero")
+      end
     end
 
-    it "throws an error if transaction source account is different to server account id" do
-      attrs[:server] = KeyPair()
-      expect { read_challenge }.to raise_invalid("source account is not equal to the server's account")
+    context "when transaction source account is different to server account id" do
+      before { attrs[:server] = KeyPair() }
+
+      it "raises an error" do
+        expect { read_challenge }.to raise_invalid("source account is not equal to the server's account")
+      end
     end
 
-    it "throws an error if transaction doesn't contain any operation" do
-      transaction.operations.clear
+    context "when transaction doesn't contain any operation" do
+      before { transaction.operations.clear }
 
-      expect { read_challenge }.to raise_invalid("should contain at least one operation")
+      it "raises an error" do
+        expect { read_challenge }.to raise_invalid("should contain at least one operation")
+      end
     end
 
-    it "throws an error if operation does not contain the source account" do
-      transaction.operations.first.source_account = nil
+    context "when operation does not contain the source account" do
+      before { transaction.operations.first.source_account = nil }
 
-      expect { read_challenge }.to raise_invalid("operation should contain a source account")
+      it "raises an error" do
+        expect { read_challenge }.to raise_invalid("operation should contain a source account")
+      end
     end
 
-    it "throws an error if operation is not manage data" do
-      transaction.operations.replace([invalid_operation])
+    context "when operation is not manage data" do
+      before { transaction.operations.replace([invalid_operation]) }
 
-      expect { read_challenge }.to raise_invalid("first operation should be manageData")
+      it "raises an error" do
+        expect { read_challenge }.to raise_invalid("first operation should be manageData")
+      end
     end
 
     context "when `domain` is provided for check" do
@@ -156,23 +181,61 @@ RSpec.describe Digitalbits::SEP10 do
       expect { read_challenge }.to raise_invalid("is not signed by the server")
     end
 
-    it "throws an error if transaction does not contain timeBounds" do
-      transaction.time_bounds = nil
+    describe "transaction time bounds" do
+      context "when transaction does not contain timeBounds" do
+        before { transaction.cond = DigitalBits::Preconditions.new(:precond_none) }
 
-      expect { read_challenge }.to raise_invalid("has expired")
-    end
+        it "throws an error" do
+          expect { read_challenge }.to raise_invalid("has expired")
+        end
+      end
 
-    it "throws an error if challenge is expired" do
-      transaction.time_bounds = Digitalbits::TimeBounds.new(min_time: 0, max_time: 5)
+      it "uses 5 minutes grace period for validation" do
+        transaction.cond = DigitalBits::Preconditions.new(
+          :precond_time,
+          DigitalBits::TimeBounds.new(
+            min_time: 1.minute.from_now.to_i,
+            max_time: 2.minutes.from_now.to_i
+          )
+        )
+        expect { read_challenge }.not_to raise_error
 
-      expect { read_challenge }.to raise_invalid("has expired")
-    end
+        transaction.cond = DigitalBits::Preconditions.new(
+          :precond_time,
+          DigitalBits::TimeBounds.new(
+            min_time: 2.minutes.ago.to_i,
+            max_time: 1.minute.ago.to_i
+          )
+        )
+        expect { read_challenge }.not_to raise_error
+      end
 
-    it "throws an error if challenge is in the future" do
-      now = Time.now.to_i
-      transaction.time_bounds = Digitalbits::TimeBounds.new(min_time: now + 100, max_time: now + 500)
+      context "when challenge is expired beyond grace period" do
+        before do
+          transaction.cond = DigitalBits::Preconditions.new(
+            :precond_time,
+            DigitalBits::TimeBounds.new(min_time: 0, max_time: 5)
+          )
+        end
 
-      expect { read_challenge }.to raise_invalid("has expired")
+        it "throws an error if challenge is expired" do
+          expect { read_challenge }.to raise_invalid("has expired")
+        end
+      end
+
+      context "when challenge is in the future beyond grace period" do
+        it "throws an error" do
+          transaction.cond = DigitalBits::Preconditions.new(
+            :precond_time,
+            DigitalBits::TimeBounds.new(
+              min_time: 6.minutes.from_now.to_i,
+              max_time: 7.minutes.from_now.to_i
+            )
+          )
+
+          expect { read_challenge }.to raise_invalid("has expired")
+        end
+      end
     end
 
     it "throws an error if provided auth domain is wrong" do
@@ -342,6 +405,35 @@ RSpec.describe Digitalbits::SEP10 do
 
       expect { verify_signers }.to raise_invalid("is not signed by the server")
     end
+
+    context "when client domain was provided" do
+      let(:client_domain_account) { DigitalBits::KeyPair.random }
+      let(:options) do
+        {
+          client_domain: "client_test",
+          client_domain_account: client_domain_account
+        }
+      end
+
+      context "but transaction is not signed with client signature" do
+        it "raises an error" do
+          expect { verify_signers }.to raise_invalid("not signed by client domain account")
+        end
+      end
+
+      context "and transaction is signed with client signature" do
+        before { signers << client_domain_account }
+
+        it "returns expected signatures" do
+          expect(verify_signers).to contain_exactly(
+            user.address,
+            cosigner_a.address,
+            cosigner_b.address,
+            client_domain_account.address
+          )
+        end
+      end
+    end
   end
 
   describe "#verify_tx_signatures" do
@@ -375,7 +467,7 @@ RSpec.describe Digitalbits::SEP10 do
   describe "#verify_tx_signed_by" do
     let(:keypair) { KeyPair() }
     let(:envelope) do
-      Digitalbits::TransactionBuilder.bump_sequence(
+      DigitalBits::TransactionBuilder.bump_sequence(
         source_account: keypair,
         bump_to: 1000,
         sequence_number: 0
@@ -398,6 +490,6 @@ RSpec.describe Digitalbits::SEP10 do
   end
 
   def raise_invalid(cause)
-    raise_error(Digitalbits::InvalidSep10ChallengeError, Regexp.compile(cause))
+    raise_error(DigitalBits::InvalidSep10ChallengeError, Regexp.compile(cause))
   end
 end
